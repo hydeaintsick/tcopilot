@@ -53,7 +53,11 @@ export default function HomePage() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <a href={siteConfig.channelUrl} target="_blank" rel="noreferrer">
+                <a
+                  href={siteConfig.channelUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <Send className="h-4 w-4" /> {t.hero.ctaPrimary}
                 </a>
               </Button>
@@ -79,7 +83,9 @@ export default function HomePage() {
                 </span>
                 <div>
                   <CardTitle className="text-base">{siteConfig.name}</CardTitle>
-                  <p className="text-xs text-muted-foreground">{t.hero.online}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {t.hero.online}
+                  </p>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3 py-5">
@@ -87,7 +93,9 @@ export default function HomePage() {
                   <div
                     key={i}
                     className={
-                      msg.from === "user" ? "flex justify-end" : "flex justify-start"
+                      msg.from === "user"
+                        ? "flex justify-end"
+                        : "flex justify-start"
                     }
                   >
                     <div
@@ -146,12 +154,17 @@ export default function HomePage() {
             {t.features.items.map((feature, i) => {
               const Icon = featureIcons[i] ?? Sparkles;
               return (
-                <Card key={feature.title} className="transition-shadow hover:shadow-md">
+                <Card
+                  key={feature.title}
+                  className="transition-shadow hover:shadow-md"
+                >
                   <CardHeader>
                     <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-accent text-accent-foreground">
                       <Icon className="h-5 w-5" />
                     </span>
-                    <CardTitle className="pt-3 text-lg">{feature.title}</CardTitle>
+                    <CardTitle className="pt-3 text-lg">
+                      {feature.title}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground">
@@ -198,7 +211,11 @@ export default function HomePage() {
               </h2>
               <p className="max-w-xl text-muted-foreground">{t.cta.subtitle}</p>
               <Button asChild size="lg">
-                <a href={siteConfig.channelUrl} target="_blank" rel="noreferrer">
+                <a
+                  href={siteConfig.channelUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <Send className="h-4 w-4" /> {t.cta.button}
                 </a>
               </Button>

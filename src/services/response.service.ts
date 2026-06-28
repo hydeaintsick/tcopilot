@@ -32,7 +32,21 @@ function getTaskEmoji(title: string): string {
   return "📌";
 }
 
+function formatDateTimeFr(date: Date, timezone: string): string {
+  return new Intl.DateTimeFormat("fr-FR", {
+    timeZone: timezone,
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
 export class ResponseService {
+  /** Préfixe lisible d'une tâche (« #3 »), vide si la tâche n'a pas d'identifiant. */
+  private idLabel(task: TaskSummary): string {
+    return task.displayId != null ? `#${task.displayId} ` : "";
+  }
+
   format(result: ActionResult, timezone: string): string {
     switch (result.type) {
       case "task_created":
@@ -45,7 +59,7 @@ export class ResponseService {
         return this.formatTaskUpdated(result.task!);
 
       case "task_deleted":
-        return `C'est fait ! J'ai supprimé « ${result.task!.title} ».`;
+        return `C'est fait ! J'ai supprimé ${this.idLabel(result.task!)}« ${result.task!.title} ».`;
 
       case "tasks_deleted": {
         const titles = (result.tasks ?? []).map((t) => `« ${t.title} »`).join(" et ");
@@ -84,22 +98,24 @@ export class ResponseService {
   }
 
   private formatTaskCreated(task: TaskSummary, timezone: string): string {
+    const tag = task.displayId != null ? `\n\n🆔 #${task.displayId}` : "";
+
     if (!task.date) {
-      return `C'est noté !\n\nJ'ai ajouté « ${task.title} » à ta liste.`;
+      return `C'est noté !\n\nJ'ai ajouté « ${task.title} » à ta liste.${tag}`;
     }
 
     const dateLabel = this.relativeDateLabel(task.date, timezone);
 
     if (task.time) {
-      return `Parfait 👍\n\nJe te rappellerai ${dateLabel} à ${task.time} pour « ${task.title} ».`;
+      return `Parfait 👍\n\nJe te rappellerai ${dateLabel} à ${task.time} pour « ${task.title} ».${tag}`;
     }
 
     if (task.period) {
       const periodLabel = getPeriodLabel(task.period as TaskPeriod);
-      return `Parfait 👍\n\nJe te rappellerai ${dateLabel} ${periodLabel} pour « ${task.title} ».`;
+      return `Parfait 👍\n\nJe te rappellerai ${dateLabel} ${periodLabel} pour « ${task.title} ».${tag}`;
     }
 
-    return `Parfait 👍\n\nJe te rappellerai ${dateLabel} à 9h pour « ${task.title} ».`;
+    return `Parfait 👍\n\nJe te rappellerai ${dateLabel} à 9h pour « ${task.title} ».${tag}`;
   }
 
   private formatTasksCreated(tasks: TaskSummary[], timezone: string): string {
@@ -109,7 +125,7 @@ export class ResponseService {
 
     const lines = tasks.map((task) => {
       const schedule = this.formatTaskSchedule(task, timezone);
-      return `• ${task.title}${schedule ? ` — ${schedule}` : ""}`;
+      return `• ${this.idLabel(task)}${task.title}${schedule ? ` — ${schedule}` : ""}`;
     });
 
     return `Parfait 👍 J'ai créé ${tasks.length} tâches :\n\n${lines.join("\n")}`;
@@ -156,7 +172,7 @@ export class ResponseService {
       const lines = dayTasks.map((task) => {
         const time = this.formatTaskTime(task);
         const emoji = getTaskEmoji(task.title);
-        return `${emoji} ${task.title}${time ? ` — ${time}` : ""}`;
+        return `${emoji} ${this.idLabel(task)}${task.title}${time ? ` — ${time}` : ""}`;
       });
 
       sections.push(`${header}\n${lines.join("\n")}`);
@@ -220,10 +236,13 @@ export class ResponseService {
   }
 
   private formatAmbiguous(tasks: TaskSummary[]): string {
-    const lines = tasks.map(
-      (task, index) => `${index + 1}. ${task.title}`
-    );
-    return `J'ai trouvé plusieurs tâches. Laquelle ?\n\n${lines.join("\n")}`;
+    const lines = tasks.map((task, index) => {
+      const ref = task.displayId != null ? `#${task.displayId}` : `${index + 1}.`;
+      return `${ref} ${task.title}`;
+    });
+    return `J'ai trouvé plusieurs tâches. Laquelle ? Réponds avec son numéro (ex : « ${
+      tasks[0]?.displayId ?? 1
+    } »).\n\n${lines.join("\n")}`;
   }
 
   formatWelcome(): string {
@@ -234,26 +253,107 @@ Tu peux me parler naturellement :
 • « Demain faut que je fasse la salle et les courses »
 • « J'ai terminé ma séance »
 • « Qu'est-ce que j'ai aujourd'hui ? »
-• « Supprime la réunion »
+• « Supprime la tâche 3 »
 
-Commandes : /help /today /tomorrow /week /month /tasks /done /delete`;
+Commandes : /help /today /tomorrow /week /month /tasks /done /delete /subscribe /status`;
   }
 
-  formatHelp(): string {
-    return `Commandes disponibles :
+  formatHelp(priceInStars: number): string {
+    return `📖 <b>Comment utiliser TCopilot</b>
 
-/start — Message de bienvenue
-/help — Cette aide
+Parle-moi naturellement, en texte ou en vocal 🎙 :
+• « Rappelle-moi d'appeler le médecin mardi à 15h »
+• « Demain : salle de sport et courses » (plusieurs tâches d'un coup)
+• « J'ai fait les courses » → marque la tâche comme terminée
+• « Déplace l'appel médecin à demain 16h »
+• « Qu'est-ce que j'ai cette semaine ? »
+
+🆔 <b>Gérer par numéro</b>
+Chaque tâche a un numéro (#1, #2, #3…) affiché dans tes listes.
+• <code>/delete 3</code> — supprime la tâche #3
+• <code>/done 3</code> — marque la tâche #3 comme terminée
+• Quand plusieurs tâches se ressemblent, je te demande laquelle : réponds simplement avec son numéro.
+
+📋 <b>Commandes</b>
 /today — Tâches du jour
 /tomorrow — Tâches de demain
 /week — Tâches des 7 prochains jours
 /month — Tâches du mois
 /tasks — Toutes les tâches
-/done — Marquer une tâche terminée (réponds à un message)
-/delete — Supprimer une tâche (réponds à un message)
+/done [n] — Marquer terminée (numéro, ou en réponse à un message)
+/delete [n] — Supprimer (numéro, ou en réponse à un message)
+/subscribe — S'abonner à TCopilot Premium (${priceInStars} ⭐/mois)
+/status — État de ton abonnement
 
-Tu peux aussi me parler librement en français !
-• Crée plusieurs tâches en une seule phrase
-• « J'ai fait X » pour marquer une tâche comme terminée`;
+💡 Astuce : règle ton fuseau horaire en disant « je suis à Montréal ».`;
+  }
+
+  formatPaywall(priceInStars: number): string {
+    return `🔒 <b>TCopilot Premium</b>
+
+Pour utiliser ton assistant, il te faut un abonnement actif.
+
+✨ <b>${priceInStars} ⭐ / mois</b> — renouvellement automatique, annulable à tout moment dans Telegram.
+
+Appuie sur /subscribe pour t'abonner en quelques secondes. ⭐`;
+  }
+
+  formatSubscriptionInvoiceIntro(priceInStars: number): string {
+    return `Voici ta facture pour TCopilot Premium (${priceInStars} ⭐/mois). Confirme le paiement ci-dessous pour activer ton accès. ✨`;
+  }
+
+  formatSubscriptionSuccess(
+    expiresAt: Date | null,
+    timezone: string,
+    isFirst: boolean
+  ): string {
+    const until = expiresAt
+      ? `\n\nProchain renouvellement : ${formatDateTimeFr(expiresAt, timezone)}.`
+      : "";
+    if (isFirst) {
+      return `Merci et bienvenue dans TCopilot Premium ! 🎉\n\nTon accès est maintenant actif.${until}`;
+    }
+    return `Abonnement renouvelé, merci de ta confiance ! 💙${until}`;
+  }
+
+  formatStatus(
+    status: {
+      hasAccess: boolean;
+      reason: "whitelist" | "subscription" | "trial" | "none";
+      expiresAt: Date | null;
+    },
+    timezone: string,
+    isAdmin: boolean,
+    priceInStars: number
+  ): string {
+    if (isAdmin) {
+      return "👑 Tu es administrateur : accès complet et illimité.";
+    }
+    switch (status.reason) {
+      case "whitelist":
+        return "✅ Accès Premium offert (à vie). Profite bien ! 💙";
+      case "subscription":
+        return `✅ Abonnement Premium actif.\n\nProchain renouvellement : ${
+          status.expiresAt ? formatDateTimeFr(status.expiresAt, timezone) : "—"
+        }.`;
+      case "trial":
+        return `🎁 Essai gratuit en cours jusqu'au ${
+          status.expiresAt ? formatDateTimeFr(status.expiresAt, timezone) : "—"
+        }.\n\nAbonne-toi avec /subscribe (${priceInStars} ⭐/mois) pour continuer ensuite.`;
+      default:
+        return `❌ Aucun abonnement actif.\n\nAbonne-toi avec /subscribe (${priceInStars} ⭐/mois).`;
+    }
+  }
+
+  formatGranted(telegramUserId: bigint): string {
+    return `✅ Accès Premium offert à l'utilisateur ${telegramUserId}.`;
+  }
+
+  formatRevoked(telegramUserId: bigint): string {
+    return `🚫 Accès Premium retiré à l'utilisateur ${telegramUserId}.`;
+  }
+
+  formatAdminUsage(command: string): string {
+    return `Usage : /${command} <telegram_user_id>`;
   }
 }

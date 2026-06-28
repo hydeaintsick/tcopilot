@@ -81,6 +81,7 @@ export interface ActionResult {
 
 export interface TaskSummary {
   id: string;
+  displayId: number | null;
   title: string;
   description: string | null;
   status: string;
@@ -94,6 +95,11 @@ export interface BotContext {
   userId: string;
   telegramUserId: bigint;
   timezone: string;
+  isAdmin: boolean;
+  hasPremium: boolean;
+  isWhitelisted: boolean;
+  subscriptionExpiresAt: Date | null;
+  trialEndsAt: Date | null;
 }
 
 export interface ConversationMessage {

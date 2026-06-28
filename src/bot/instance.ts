@@ -1,4 +1,4 @@
-import { createBot, type BotContextType } from "./index";
+import { createBot, configureBotCommands, type BotContextType } from "./index";
 import { createServices, type AppServices } from "../config/container";
 import type { Bot } from "grammy";
 
@@ -18,7 +18,14 @@ export function getBotAndServices(): BotCache {
   if (!globalForBot.__tcopilotBot) {
     const services = createServices();
     const bot = createBot(services);
-    globalForBot.__tcopilotBot = { bot, services, ready: bot.init() };
+    const ready = bot.init().then(async () => {
+      // Le menu de commandes ne dépend pas de l'utilisateur : on le déclare une
+      // seule fois au démarrage du conteneur (échec non bloquant).
+      await configureBotCommands(bot).catch((error) => {
+        console.error("setMyCommands failed:", error);
+      });
+    });
+    globalForBot.__tcopilotBot = { bot, services, ready };
   }
   return globalForBot.__tcopilotBot;
 }

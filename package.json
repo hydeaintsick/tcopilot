@@ -10,6 +10,7 @@
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
+    "db:backfill-ids": "tsx scripts/backfill-display-ids.ts",
     "set-webhook": "tsx scripts/set-webhook.ts",
     "commit": "cz",
     "prepare": "husky"

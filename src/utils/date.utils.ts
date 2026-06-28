@@ -167,6 +167,7 @@ export function addDaysToDateString(dateStr: string, days: number): string {
 
 export function taskToSummary(task: {
   id: string;
+  displayId?: number | null;
   title: string;
   description: string | null;
   status: string;
@@ -177,6 +178,7 @@ export function taskToSummary(task: {
 }): TaskSummary {
   return {
     id: task.id,
+    displayId: task.displayId ?? null,
     title: task.title,
     description: task.description,
     status: task.status,

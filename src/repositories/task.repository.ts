@@ -4,6 +4,7 @@ import { formatDateInTimezone } from "../utils/date.utils";
 
 export interface CreateTaskData {
   userId: string;
+  displayId?: number | null;
   title: string;
   description?: string | null;
   priority?: TaskPriority;
@@ -33,6 +34,16 @@ export class TaskRepository {
   async findById(id: string, userId: string): Promise<Task | null> {
     return prisma.task.findFirst({
       where: { id, userId },
+    });
+  }
+
+  /** Recherche une tâche via son identifiant lisible (#1, #2, ...) propre à l'utilisateur. */
+  async findByDisplayId(
+    userId: string,
+    displayId: number
+  ): Promise<Task | null> {
+    return prisma.task.findFirst({
+      where: { userId, displayId },
     });
   }
 
