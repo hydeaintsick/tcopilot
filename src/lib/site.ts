@@ -5,5 +5,5 @@ export const siteConfig = {
   telegramUrl:
     process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL ?? "https://t.me/mypersonalcopilot_bot",
   channelUrl:
-    process.env.NEXT_PUBLIC_TELEGRAM_CHANNEL_URL ?? "https://t.me/mypersonalcopilot",
+    process.env.NEXT_PUBLIC_TELEGRAM_CHANNEL_URL ?? "https://t.me/mypersonalcopilot_bot",
 } as const;
