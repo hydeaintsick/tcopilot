@@ -34,10 +34,13 @@ jobs:
             --environment=${{ github.event_name == 'push' && 'production' || 'preview' }} \
             --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Build project
+        run: vercel build ${{ github.event_name == 'push' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Deploy to Vercel
         id: deploy
         run: |
-          URL=$(vercel deploy \
+          URL=$(vercel deploy --prebuilt \
             ${{ github.event_name == 'push' && '--prod' || '' }} \
             --token=${{ secrets.VERCEL_TOKEN }})
           echo "url=$URL" >> "$GITHUB_OUTPUT"
