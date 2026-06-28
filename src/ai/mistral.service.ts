@@ -14,6 +14,23 @@ export class MistralService {
     this.client = new Mistral({ apiKey: env.MISTRAL_API_KEY });
   }
 
+  /**
+   * Transcrit un fichier audio (message vocal Telegram, .ogg/opus) en texte
+   * via le modèle Voxtral de Mistral. La langue n'est pas imposée pour laisser
+   * le modèle détecter le français/anglais automatiquement.
+   */
+  async transcribeAudio(
+    content: Uint8Array | ArrayBuffer,
+    fileName = "voice.ogg"
+  ): Promise<string> {
+    const response = await this.client.audio.transcriptions.complete({
+      model: env.MISTRAL_TRANSCRIBE_MODEL,
+      file: { fileName, content },
+    });
+
+    return response.text.trim();
+  }
+
   async parseIntent(
     message: string,
     timezone: string,

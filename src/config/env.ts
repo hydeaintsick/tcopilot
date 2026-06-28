@@ -4,6 +4,7 @@ const envSchema = z.object({
   TELEGRAM_BOT_TOKEN: z.string().min(1),
   MISTRAL_API_KEY: z.string().min(1),
   MISTRAL_MODEL: z.string().default("mistral-small-latest"),
+  MISTRAL_TRANSCRIBE_MODEL: z.string().default("voxtral-mini-latest"),
   DATABASE_URL: z.string().min(1),
   WEBHOOK_SECRET: z.string().optional(),
   CRON_SECRET: z.string().min(1),

@@ -303,8 +303,74 @@ export function createBot(services: AppServices): Bot<BotContextType> {
       return;
     }
 
+    await handleUserText(ctx, services, text);
+  });
+
+  // Messages vocaux et fichiers audio : on transcrit puis on traite comme du texte.
+  bot.on(["message:voice", "message:audio"], async (ctx) => {
+    if (!ctx.appContext) return;
+
     const stopTyping = startTyping(ctx);
+    let text: string;
     try {
+      const audio = await downloadTelegramFile(ctx);
+      text = (await services.mistralService.transcribeAudio(audio)).trim();
+    } catch (error) {
+      stopTyping();
+      console.error("Voice transcription failed:", error);
+      await ctx.reply(
+        "Désolé, je n'ai pas réussi à comprendre ton message vocal. Tu peux réessayer ou l'écrire ?"
+      );
+      return;
+    }
+    stopTyping();
+
+    if (!text) {
+      await ctx.reply(
+        "Je n'ai rien entendu dans ce vocal. Tu peux réessayer ?"
+      );
+      return;
+    }
+
+    // On confirme ce qui a été compris, puis on traite la transcription.
+    await ctx.reply(`🎙 « ${text} »`);
+    await handleUserText(ctx, services, text);
+  });
+
+  return bot;
+}
+
+/**
+ * Télécharge le contenu binaire du message vocal/audio courant depuis l'API
+ * Telegram (récupération de `file_path` puis fetch du fichier).
+ */
+async function downloadTelegramFile(ctx: BotContextType): Promise<Uint8Array> {
+  const file = await ctx.getFile();
+  if (!file.file_path) {
+    throw new Error("Fichier Telegram sans file_path");
+  }
+  const url = `https://api.telegram.org/file/bot${env.TELEGRAM_BOT_TOKEN}/${file.file_path}`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Téléchargement du fichier échoué: ${response.status}`);
+  }
+  return new Uint8Array(await response.arrayBuffer());
+}
+
+/**
+ * Traite un message texte de l'utilisateur (qu'il provienne d'un message texte
+ * ou de la transcription d'un vocal) : désambiguïsation en attente, parsing
+ * d'intention via Mistral, routage et réponse.
+ */
+async function handleUserText(
+  ctx: BotContextType,
+  services: AppServices,
+  text: string
+): Promise<void> {
+  if (!ctx.appContext) return;
+
+  const stopTyping = startTyping(ctx);
+  try {
     // --- Résolution de désambiguïsation en attente ---
     if (ctx.session.pendingAmbiguous) {
       const { action, tasks, intent } = ctx.session.pendingAmbiguous;
@@ -381,10 +447,7 @@ export function createBot(services: AppServices): Bot<BotContextType> {
         ? { parse_mode: "HTML", reply_markup: buildNavKeyboard() }
         : {}
     );
-    } finally {
-      stopTyping();
-    }
-  });
-
-  return bot;
+  } finally {
+    stopTyping();
+  }
 }
