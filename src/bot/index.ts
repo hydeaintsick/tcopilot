@@ -56,6 +56,19 @@ function resolveDisambiguation(text: string, tasks: TaskSummary[]): TaskSummary[
   return null;
 }
 
+/**
+ * Affiche l'indicateur « en train d'écrire… » dans Telegram pendant que le bot
+ * réfléchit. L'action expire après 5 s côté Telegram : on la rafraîchit donc
+ * toutes les ~4 s jusqu'à l'appel de la fonction d'arrêt retournée.
+ */
+function startTyping(ctx: BotContextType): () => void {
+  void ctx.replyWithChatAction("typing").catch(() => {});
+  const interval = setInterval(() => {
+    void ctx.replyWithChatAction("typing").catch(() => {});
+  }, 4000);
+  return () => clearInterval(interval);
+}
+
 function buildNavKeyboard(): InlineKeyboard {
   return new InlineKeyboard()
     .text("📅 Aujourd'hui", "nav:today")
@@ -290,6 +303,8 @@ export function createBot(services: AppServices): Bot<BotContextType> {
       return;
     }
 
+    const stopTyping = startTyping(ctx);
+    try {
     // --- Résolution de désambiguïsation en attente ---
     if (ctx.session.pendingAmbiguous) {
       const { action, tasks, intent } = ctx.session.pendingAmbiguous;
@@ -366,6 +381,9 @@ export function createBot(services: AppServices): Bot<BotContextType> {
         ? { parse_mode: "HTML", reply_markup: buildNavKeyboard() }
         : {}
     );
+    } finally {
+      stopTyping();
+    }
   });
 
   return bot;
