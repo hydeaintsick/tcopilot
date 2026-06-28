@@ -1,6 +1,6 @@
 import type { Task, TaskPeriod, TaskPriority, TaskStatus } from "@prisma/client";
-import { prisma } from "../config/prisma.js";
-import { formatDateInTimezone } from "../utils/date.utils.js";
+import { prisma } from "../config/prisma";
+import { formatDateInTimezone } from "../utils/date.utils";
 
 export interface CreateTaskData {
   userId: string;

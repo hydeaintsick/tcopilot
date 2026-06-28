@@ -1,6 +1,6 @@
-import type { ActionResult, BotContext, ParsedIntent } from "../types/intent.js";
-import { TaskService } from "./task.service.js";
-import { UserService } from "./user.service.js";
+import type { ActionResult, BotContext, ParsedIntent } from "../types/intent";
+import { TaskService } from "./task.service";
+import { UserService } from "./user.service";
 
 export class IntentRouterService {
   constructor(

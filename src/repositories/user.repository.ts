@@ -1,5 +1,5 @@
 import type { User } from "@prisma/client";
-import { prisma } from "../config/prisma.js";
+import { prisma } from "../config/prisma";
 
 export class UserRepository {
   async findOrCreateByTelegramId(telegramUserId: bigint): Promise<User> {

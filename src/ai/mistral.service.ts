@@ -1,11 +1,11 @@
 import { Mistral } from "@mistralai/mistralai";
-import { env } from "../config/env.js";
+import { env } from "../config/env";
 import {
   parsedIntentSchema,
   type ConversationMessage,
   type ParsedIntent,
-} from "../types/intent.js";
-import { buildRetryPrompt, buildSystemPrompt } from "./prompts/system.js";
+} from "../types/intent";
+import { buildRetryPrompt, buildSystemPrompt } from "./prompts/system";
 
 export class MistralService {
   private client: Mistral;

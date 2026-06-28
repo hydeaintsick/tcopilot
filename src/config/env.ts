@@ -1,27 +1,39 @@
-import { config } from "dotenv";
 import { z } from "zod";
-
-config();
 
 const envSchema = z.object({
   TELEGRAM_BOT_TOKEN: z.string().min(1),
   MISTRAL_API_KEY: z.string().min(1),
   MISTRAL_MODEL: z.string().default("mistral-small-latest"),
   DATABASE_URL: z.string().min(1),
-  PORT: z.coerce.number().default(3000),
-  WEBHOOK_URL: z.string().url(),
   WEBHOOK_SECRET: z.string().optional(),
+  CRON_SECRET: z.string().min(1),
+  PUBLIC_BASE_URL: z.string().url().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
 
-function loadEnv(): Env {
+let cached: Env | null = null;
+
+export function getEnv(): Env {
+  if (cached) {
+    return cached;
+  }
   const result = envSchema.safeParse(process.env);
   if (!result.success) {
-    console.error("Invalid environment variables:", result.error.format());
-    process.exit(1);
+    throw new Error(
+      `Invalid environment variables: ${JSON.stringify(result.error.format())}`
+    );
   }
-  return result.data;
+  cached = result.data;
+  return cached;
 }
 
-export const env = loadEnv();
+/**
+ * Lazy proxy: accessing `env.X` validates on first use (server-side) instead of
+ * at import time, so the Next.js build (which never reads these) does not fail.
+ */
+export const env = new Proxy({} as Env, {
+  get(_target, prop: string) {
+    return getEnv()[prop as keyof Env];
+  },
+});

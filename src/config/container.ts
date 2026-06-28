@@ -1,11 +1,11 @@
-import type { BotContext } from "../types/intent.js";
-import { UserRepository } from "../repositories/user.repository.js";
-import { TaskRepository } from "../repositories/task.repository.js";
-import { MistralService } from "../ai/mistral.service.js";
-import { TaskService } from "../services/task.service.js";
-import { UserService } from "../services/user.service.js";
-import { IntentRouterService } from "../services/intent-router.service.js";
-import { ResponseService } from "../services/response.service.js";
+import type { BotContext } from "../types/intent";
+import { UserRepository } from "../repositories/user.repository";
+import { TaskRepository } from "../repositories/task.repository";
+import { MistralService } from "../ai/mistral.service";
+import { TaskService } from "../services/task.service";
+import { UserService } from "../services/user.service";
+import { IntentRouterService } from "../services/intent-router.service";
+import { ResponseService } from "../services/response.service";
 
 export interface AppServices {
   userRepository: UserRepository;

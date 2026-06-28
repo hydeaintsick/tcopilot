@@ -1,8 +1,9 @@
 import { Bot, Context, InlineKeyboard, session } from "grammy";
-import type { AppServices } from "../config/container.js";
-import { resolveBotContext } from "../config/container.js";
-import { env } from "../config/env.js";
-import type { BotContext as AppBotContext, ConversationMessage, PendingAmbiguous, TaskSummary } from "../types/intent.js";
+import type { AppServices } from "../config/container";
+import { resolveBotContext } from "../config/container";
+import { env } from "../config/env";
+import type { BotContext as AppBotContext, ConversationMessage, PendingAmbiguous, TaskSummary } from "../types/intent";
+import { PrismaSessionStorage } from "./session-storage";
 
 const HISTORY_MAX = 6; // 3 échanges user/assistant
 
@@ -12,7 +13,7 @@ interface SessionData {
   pendingAmbiguous?: PendingAmbiguous;
 }
 
-type BotContextType = Context & {
+export type BotContextType = Context & {
   session: SessionData;
   appServices: AppServices;
   appContext: AppBotContext;
@@ -71,6 +72,7 @@ export function createBot(services: AppServices): Bot<BotContextType> {
   bot.use(
     session({
       initial: (): SessionData => ({ history: [] }),
+      storage: new PrismaSessionStorage<SessionData>(),
     })
   );
 
@@ -367,11 +369,4 @@ export function createBot(services: AppServices): Bot<BotContextType> {
   });
 
   return bot;
-}
-
-export async function registerWebhook(bot: Bot<BotContextType>): Promise<void> {
-  await bot.api.setWebhook(env.WEBHOOK_URL, {
-    secret_token: env.WEBHOOK_SECRET,
-  });
-  console.log(`Webhook registered: ${env.WEBHOOK_URL}`);
 }

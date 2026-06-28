@@ -1,4 +1,4 @@
-import { getTodayInTimezone } from "../../utils/date.utils.js";
+import { getTodayInTimezone } from "../../utils/date.utils";
 
 export function buildSystemPrompt(timezone: string): string {
   const today = getTodayInTimezone(timezone);

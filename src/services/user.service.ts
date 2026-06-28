@@ -1,7 +1,7 @@
 import { TaskPriority } from "@prisma/client";
-import { UserRepository } from "../repositories/user.repository.js";
-import { isValidTimezone } from "../utils/date.utils.js";
-import type { ActionResult } from "../types/intent.js";
+import { UserRepository } from "../repositories/user.repository";
+import { isValidTimezone } from "../utils/date.utils";
+import type { ActionResult } from "../types/intent";
 
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}

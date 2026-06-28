@@ -1,5 +1,5 @@
 import { TaskPeriod } from "@prisma/client";
-import type { TaskSummary } from "../types/intent.js";
+import type { TaskSummary } from "../types/intent";
 
 const PERIOD_HOURS: Record<TaskPeriod, string> = {
   MORNING: "09:00",

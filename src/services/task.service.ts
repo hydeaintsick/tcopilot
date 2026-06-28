@@ -1,14 +1,14 @@
 import { TaskPriority, TaskStatus } from "@prisma/client";
-import { TaskRepository } from "../repositories/task.repository.js";
-import type { ActionResult, ParsedIntent, TaskItem, TaskSummary } from "../types/intent.js";
+import { TaskRepository } from "../repositories/task.repository";
+import type { ActionResult, ParsedIntent, TaskItem, TaskSummary } from "../types/intent";
 import {
   addDaysToDateString,
   computeReminderAt,
   getTodayInTimezone,
   parseDateString,
   taskToSummary,
-} from "../utils/date.utils.js";
-import { resolvePriority } from "./user.service.js";
+} from "../utils/date.utils";
+import { resolvePriority } from "./user.service";
 
 export class TaskService {
   constructor(private readonly taskRepository: TaskRepository) {}

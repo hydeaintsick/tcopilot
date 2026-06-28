@@ -1,11 +1,11 @@
 import type { TaskPeriod } from "@prisma/client";
-import type { ActionResult, TaskSummary } from "../types/intent.js";
+import type { ActionResult, TaskSummary } from "../types/intent";
 import {
   addDaysToDateString,
   formatDateForDisplay,
   getPeriodLabel,
   getTodayInTimezone,
-} from "../utils/date.utils.js";
+} from "../utils/date.utils";
 
 const EMOJI_RULES: Array<[RegExp, string]> = [
   [/sport|salle|gym|musculation|séance|entraînement|fitness|running|course à pied|jogging|vélo|natation|piscine|yoga|pilates/i, "🏋️"],
