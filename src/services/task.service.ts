@@ -102,7 +102,7 @@ export class TaskService {
   }
 
   async listAll(userId: string): Promise<ActionResult> {
-    const tasks = await this.taskRepository.findTodoByUser(userId);
+    const tasks = await this.taskRepository.findVisibleByUser(userId);
     return {
       type: "task_list",
       tasks: tasks.map(taskToSummary),
@@ -140,7 +140,7 @@ export class TaskService {
     endStr: string,
     timezone: string
   ): Promise<ActionResult> {
-    const tasks = await this.taskRepository.findTodoByDateRange(
+    const tasks = await this.taskRepository.findVisibleByDateRange(
       userId,
       startStr,
       endStr,
@@ -157,7 +157,7 @@ export class TaskService {
     dateStr: string,
     timezone: string
   ): Promise<ActionResult> {
-    const tasks = await this.taskRepository.findTodoByDate(
+    const tasks = await this.taskRepository.findVisibleByDate(
       userId,
       dateStr,
       timezone

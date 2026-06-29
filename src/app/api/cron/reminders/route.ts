@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getBotAndServices } from "@/bot/instance";
 import { processDueReminders } from "@/scheduler/reminder.job";
+import { rolloverOverdueTasks } from "@/scheduler/rollover.job";
 import { env } from "@/config/env";
 
 export const runtime = "nodejs";
@@ -15,8 +16,11 @@ async function handle(req: Request): Promise<Response> {
   try {
     const { bot, services, ready } = getBotAndServices();
     await ready;
+    // Report des tâches non terminées avant l'envoi : une tâche en retard repasse
+    // sur aujourd'hui et son rappel est réarmé pour la nouvelle date.
+    const rolledOver = await rolloverOverdueTasks(services.taskRepository);
     const sent = await processDueReminders(bot.api, services.taskRepository);
-    return NextResponse.json({ ok: true, sent });
+    return NextResponse.json({ ok: true, sent, rolledOver });
   } catch (error) {
     console.error("Cron reminders error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

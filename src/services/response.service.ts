@@ -5,8 +5,15 @@ import type { Language } from "../lib/i18n";
 import {
   addDaysToDateString,
   formatDateForDisplay,
+  getPeriodHour,
   getTodayInTimezone,
 } from "../utils/date.utils";
+
+/** Case « à faire » (vide) et case « fait » affichées devant chaque tâche. */
+const CHECKBOX_TODO = "⬜";
+const CHECKBOX_DONE = "✅";
+/** Clé de tri pour une tâche sans heure ni période : reléguée en fin de journée. */
+const NO_TIME_SORT_KEY = "99:99";
 
 const EMOJI_RULES: Array<[RegExp, string]> = [
   [/sport|salle|gym|musculation|séance|entraînement|fitness|running|course à pied|jogging|vélo|natation|piscine|yoga|pilates|workout|gimnasio|palestra|тренировк|posilovn/i, "🏋️"],
@@ -176,21 +183,44 @@ export class ResponseService {
     const sections: string[] = [];
 
     for (const key of sortedKeys) {
-      const dayTasks = groups.get(key)!;
+      // Tri intra-journée par l'heure à laquelle la tâche doit être faite.
+      const dayTasks = [...groups.get(key)!].sort((a, b) => this.compareByTime(a, b));
       const header = key === "no_date"
         ? d.headerNoDate
         : `${this.dayEmoji(key, timezone)} <b>${this.dayLabel(key, timezone, d)}</b>`;
 
-      const lines = dayTasks.map((task) => {
-        const time = this.formatTaskTime(task, d);
-        const emoji = getTaskEmoji(task.title);
-        return `${emoji} ${this.idLabel(task)}${task.title}${time ? ` — ${time}` : ""}`;
-      });
+      const lines = dayTasks.map((task) => this.formatTaskLine(task, d));
 
       sections.push(`${header}\n${lines.join("\n")}`);
     }
 
     return sections.join("\n\n");
+  }
+
+  /** Rend une ligne de checklist : case cochée + titre barré si la tâche est faite. */
+  private formatTaskLine(task: TaskSummary, d: BotDict): string {
+    if (task.status === "DONE") {
+      return `${CHECKBOX_DONE} <s>${this.idLabel(task)}${task.title}</s>`;
+    }
+    const time = this.formatTaskTime(task, d);
+    const emoji = getTaskEmoji(task.title);
+    return `${CHECKBOX_TODO} ${emoji} ${this.idLabel(task)}${task.title}${time ? ` — ${time}` : ""}`;
+  }
+
+  /** Ordonne deux tâches par heure d'exécution (les non terminées d'abord à heure égale). */
+  private compareByTime(a: TaskSummary, b: TaskSummary): number {
+    const keyA = this.sortTimeKey(a);
+    const keyB = this.sortTimeKey(b);
+    if (keyA !== keyB) return keyA.localeCompare(keyB);
+    if (a.status !== b.status) return a.status === "DONE" ? 1 : -1;
+    return 0;
+  }
+
+  /** Heure effective utilisée pour le tri (heure exacte, sinon heure de la période). */
+  private sortTimeKey(task: TaskSummary): string {
+    if (task.time) return task.time;
+    if (task.period) return getPeriodHour(task.period as TaskPeriod);
+    return NO_TIME_SORT_KEY;
   }
 
   private dayEmoji(dateStr: string, timezone: string): string {

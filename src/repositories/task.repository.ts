@@ -1,6 +1,10 @@
-import type { Task, TaskPeriod, TaskPriority, TaskStatus } from "@prisma/client";
+import { TaskStatus } from "@prisma/client";
+import type { Task, TaskPeriod, TaskPriority } from "@prisma/client";
 import { prisma } from "../config/prisma";
 import { formatDateInTimezone } from "../utils/date.utils";
+
+/** Statuts affichés dans les listes : on conserve les tâches faites (✅) pour montrer l'évolution. */
+const VISIBLE_STATUSES = [TaskStatus.TODO, TaskStatus.DONE];
 
 export interface CreateTaskData {
   userId: string;
@@ -47,14 +51,23 @@ export class TaskRepository {
     });
   }
 
+  /** Tâches actives uniquement (TODO). Sert à l'appariement (complétion/suppression/modif). */
   async findTodoByUser(userId: string): Promise<Task[]> {
     return prisma.task.findMany({
-      where: { userId, status: "TODO" },
+      where: { userId, status: TaskStatus.TODO },
       orderBy: [{ date: "asc" }, { createdAt: "asc" }],
     });
   }
 
-  async findTodoByDate(
+  /** Tâches affichées dans les listes (à faire + faites) pour rendre la checklist. */
+  async findVisibleByUser(userId: string): Promise<Task[]> {
+    return prisma.task.findMany({
+      where: { userId, status: { in: VISIBLE_STATUSES } },
+      orderBy: [{ date: "asc" }, { createdAt: "asc" }],
+    });
+  }
+
+  async findVisibleByDate(
     userId: string,
     dateStr: string,
     timezone: string
@@ -62,7 +75,7 @@ export class TaskRepository {
     const tasks = await prisma.task.findMany({
       where: {
         userId,
-        status: "TODO",
+        status: { in: VISIBLE_STATUSES },
         date: { not: null },
       },
       orderBy: [{ time: "asc" }, { period: "asc" }, { createdAt: "asc" }],
@@ -74,7 +87,7 @@ export class TaskRepository {
     });
   }
 
-  async findTodoByDateRange(
+  async findVisibleByDateRange(
     userId: string,
     startDateStr: string,
     endDateStr: string,
@@ -83,7 +96,7 @@ export class TaskRepository {
     const tasks = await prisma.task.findMany({
       where: {
         userId,
-        status: "TODO",
+        status: { in: VISIBLE_STATUSES },
         date: { not: null },
       },
       orderBy: [{ date: "asc" }, { time: "asc" }, { period: "asc" }, { createdAt: "asc" }],
@@ -93,6 +106,29 @@ export class TaskRepository {
       if (!task.date) return false;
       const d = formatDateInTimezone(task.date, timezone);
       return d >= startDateStr && d <= endDateStr;
+    });
+  }
+
+  /**
+   * Toutes les tâches à faire ayant une date, avec le fuseau de leur propriétaire.
+   * Utilisé par le report quotidien des tâches non terminées au lendemain.
+   */
+  async findTodoWithDate(): Promise<(Task & { user: { timezone: string } })[]> {
+    return prisma.task.findMany({
+      where: { status: TaskStatus.TODO, date: { not: null } },
+      include: { user: { select: { timezone: true } } },
+    });
+  }
+
+  /** Replanifie une tâche à une nouvelle date et réarme son rappel. */
+  async rescheduleDate(
+    id: string,
+    date: Date,
+    reminderAt: Date | null
+  ): Promise<Task> {
+    return prisma.task.update({
+      where: { id },
+      data: { date, reminderAt, notifiedAt: null },
     });
   }
 
