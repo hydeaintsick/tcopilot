@@ -96,20 +96,6 @@ export class TaskRepository {
     });
   }
 
-  async findTodoByTitleReference(
-    userId: string,
-    reference: string
-  ): Promise<Task[]> {
-    return prisma.task.findMany({
-      where: {
-        userId,
-        status: "TODO",
-        title: { contains: reference },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-  }
-
   async update(id: string, userId: string, data: UpdateTaskData): Promise<Task> {
     return prisma.task.update({
       where: { id, userId },

@@ -9,6 +9,7 @@ import {
   parseDateString,
   taskToSummary,
 } from "../utils/date.utils";
+import { rankByReference } from "../utils/text-match.utils";
 import { resolvePriority } from "./user.service";
 
 /** Extrait un identifiant lisible (#3, "3", " 3 ") d'une chaîne, sinon null. */
@@ -323,18 +324,16 @@ export class TaskService {
   private async findMatchingTask(
     userId: string,
     reference: string | null
-  ): Promise<
-    | { type: "found"; task: Awaited<ReturnType<TaskRepository["findById"]>> & { id: string } }
-    | ActionResult
-  > {
+  ): Promise<{ type: "found"; task: Task } | ActionResult> {
     if (!reference) {
       return { type: "task_not_found" };
     }
 
-    const matches = await this.taskRepository.findTodoByTitleReference(
-      userId,
-      reference
-    );
+    // Appariement souple en mémoire (casse/accents/pluriel/mots parasites) plutôt
+    // qu'une simple recherche par sous-chaîne, qui échouait sur des formulations
+    // naturelles ("c'est bon pour mes analyses", "ma séance basic fit").
+    const tasks = await this.taskRepository.findTodoByUser(userId);
+    const matches = rankByReference(reference, tasks);
 
     if (matches.length === 0) {
       return { type: "task_not_found" };

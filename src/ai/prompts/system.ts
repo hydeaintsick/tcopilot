@@ -38,7 +38,7 @@ Règles :
 - Si tu ne comprends pas, intent = "unknown" et tous les autres champs null.
 - TÂCHE UNIQUE : si l'utilisateur mentionne une seule tâche (même formulée indirectement comme "faut que je...", "je dois...", "pense à..."), utilise TOUJOURS le champ title racine et laisse tasks = null.
 - MULTIPLE TÂCHES : uniquement si l'utilisateur mentionne 2 tâches ou plus clairement distinctes (ex: "faut que je fasse X et Y", "demain j'ai X, Y et Z à faire"), utilise le tableau tasks avec chaque tâche, mets intent = "create_task" et laisse title null.
-- complete_task : quand l'utilisateur indique qu'il a effectué une tâche. Cela inclut les formulations génériques ("j'ai fait X", "c'est fait", "j'ai terminé X", "X est fait") MAIS AUSSI quand l'utilisateur emploie le passé composé du verbe de la tâche ("j'ai éteint la clim", "j'ai appelé le médecin", "j'ai payé la facture", "j'ai envoyé le mail"). Dans tous les cas, remplis taskReference avec le nom ou la description de la tâche mentionnée.
+- complete_task : quand l'utilisateur indique qu'il a effectué une tâche. Cela inclut les formulations génériques ("j'ai fait X", "c'est fait", "c'est bon pour X", "c'est bon, j'ai fait X", "marque X comme fait", "j'ai terminé X", "X est fait") MAIS AUSSI quand l'utilisateur emploie le passé composé du verbe de la tâche ("j'ai éteint la clim", "j'ai appelé le médecin", "j'ai payé la facture", "j'ai envoyé le mail"). Dans tous les cas, remplis taskReference avec le nom ou la description de la tâche mentionnée (uniquement les mots porteurs de sens, ex: "analyses", "séance basic fit").
 - list_week : lister les tâches des 7 prochains jours.
 - list_month : lister les tâches du mois en cours.
 
