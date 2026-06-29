@@ -82,3 +82,26 @@ model Session {
   key   String @unique
   value String
 }
+
+/// Journal des questions posées au bot, conservé pour analyse ultérieure
+/// (notamment les messages non compris). Volontairement détaché de `User`
+/// (pas de relation/cascade) afin de conserver l'historique même après
+/// suppression d'un compte.
+model QuestionLog {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  // Identifiants de l'auteur (dénormalisés, sans relation pour éviter la cascade).
+  userId         String?  @db.ObjectId
+  telegramUserId BigInt
+  // Texte brut soumis (message tapé ou transcription du vocal).
+  text           String
+  // Origine du message : "text" ou "voice".
+  source         String
+  // Intention détectée par le modèle ("unknown" si non comprise).
+  intent         String
+  // Raccourci d'analyse : false quand l'intention est "unknown".
+  understood     Boolean
+  createdAt      DateTime @default(now())
+
+  @@index([understood, createdAt])
+  @@index([telegramUserId, createdAt])
+}

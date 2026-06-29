@@ -1,6 +1,7 @@
 import type { BotContext } from "../types/intent";
 import { UserRepository } from "../repositories/user.repository";
 import { TaskRepository } from "../repositories/task.repository";
+import { QuestionLogRepository } from "../repositories/question-log.repository";
 import { MistralService } from "../ai/mistral.service";
 import { TaskService } from "../services/task.service";
 import { UserService } from "../services/user.service";
@@ -12,6 +13,7 @@ import { getAdminUserIds } from "./env";
 export interface AppServices {
   userRepository: UserRepository;
   taskRepository: TaskRepository;
+  questionLogRepository: QuestionLogRepository;
   mistralService: MistralService;
   taskService: TaskService;
   userService: UserService;
@@ -23,6 +25,7 @@ export interface AppServices {
 export function createServices(): AppServices {
   const userRepository = new UserRepository();
   const taskRepository = new TaskRepository();
+  const questionLogRepository = new QuestionLogRepository();
   const mistralService = new MistralService();
   const taskService = new TaskService(taskRepository, userRepository);
   const userService = new UserService(userRepository);
@@ -33,6 +36,7 @@ export function createServices(): AppServices {
   return {
     userRepository,
     taskRepository,
+    questionLogRepository,
     mistralService,
     taskService,
     userService,

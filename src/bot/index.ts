@@ -494,7 +494,7 @@ export function createBot(services: AppServices): Bot<BotContextType> {
       return;
     }
 
-    await handleUserText(ctx, services, text);
+    await handleUserText(ctx, services, text, "text");
   });
 
   // Messages vocaux et fichiers audio : on transcrit puis on traite comme du texte.
@@ -525,7 +525,7 @@ export function createBot(services: AppServices): Bot<BotContextType> {
 
     // On confirme ce qui a été compris, puis on traite la transcription.
     await ctx.reply(`🎙 « ${text} »`);
-    await handleUserText(ctx, services, text);
+    await handleUserText(ctx, services, text, "voice");
   });
 
   return bot;
@@ -571,6 +571,31 @@ async function downloadTelegramFile(ctx: BotContextType): Promise<Uint8Array> {
 }
 
 /**
+ * Enregistre une question dans le journal d'analyse sans jamais propager
+ * d'erreur (la journalisation ne doit pas dégrader l'expérience utilisateur).
+ */
+async function logQuestion(
+  services: AppServices,
+  context: AppBotContext,
+  text: string,
+  source: "text" | "voice",
+  intent: string
+): Promise<void> {
+  try {
+    await services.questionLogRepository.create({
+      userId: context.userId,
+      telegramUserId: context.telegramUserId,
+      text,
+      source,
+      intent,
+      understood: intent !== "unknown",
+    });
+  } catch (error) {
+    console.error("Question log failed:", error);
+  }
+}
+
+/**
  * Traite un message texte de l'utilisateur (qu'il provienne d'un message texte
  * ou de la transcription d'un vocal) : désambiguïsation en attente, parsing
  * d'intention via Mistral, routage et réponse.
@@ -578,7 +603,8 @@ async function downloadTelegramFile(ctx: BotContextType): Promise<Uint8Array> {
 async function handleUserText(
   ctx: BotContextType,
   services: AppServices,
-  text: string
+  text: string,
+  source: "text" | "voice"
 ): Promise<void> {
   if (!ctx.appContext) return;
 
@@ -618,6 +644,11 @@ async function handleUserText(
       ctx.appContext.timezone,
       ctx.session.history
     );
+
+    // Journalisation pour analyse ultérieure (en particulier les questions non
+    // comprises). Volontairement « best-effort » : un échec d'écriture ne doit
+    // jamais empêcher la réponse à l'utilisateur.
+    void logQuestion(services, ctx.appContext, text, source, intent.intent);
 
     if (intent.timezone && intent.intent === "set_timezone") {
       const tzResult = await services.userService.updateTimezone(
