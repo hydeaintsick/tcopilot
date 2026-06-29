@@ -61,7 +61,7 @@ export class IntentRouterService {
         if (!intent.timezone) {
           return {
             type: "error",
-            message: "Je n'ai pas compris quel fuseau horaire tu souhaites.",
+            code: "timezone_missing",
           };
         }
         return this.userService.updateTimezone(userId, intent.timezone);

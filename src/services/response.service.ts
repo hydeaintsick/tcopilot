@@ -1,28 +1,29 @@
 import type { TaskPeriod } from "@prisma/client";
 import type { ActionResult, TaskSummary } from "../types/intent";
+import { getBotDict, type BotDict } from "../i18n/bot-messages";
+import type { Language } from "../lib/i18n";
 import {
   addDaysToDateString,
   formatDateForDisplay,
-  getPeriodLabel,
   getTodayInTimezone,
 } from "../utils/date.utils";
 
 const EMOJI_RULES: Array<[RegExp, string]> = [
-  [/sport|salle|gym|musculation|séance|entraînement|fitness|running|course à pied|jogging|vélo|natation|piscine|yoga|pilates/i, "🏋️"],
-  [/courses?|supermarché|lidl|aldi|carrefour|leclerc|monoprix|intermarché|épicerie|marché/i, "🛒"],
-  [/médecin|docteur|dentiste|kiné|ophtalmo|cardio|santé|hôpital|clinique|pharmacie|médicament|rdv médical/i, "🏥"],
-  [/appel|appeler|téléphoner|contacter|rappeler|appel téléphonique/i, "📞"],
-  [/réunion|meeting|conf|call|standup|présentation|brainstorm|entretien|interview|talent review/i, "💼"],
-  [/avion|vol|billet|voyage|vacances|hôtel|airbnb|train|taxi|uber|aéroport/i, "✈️"],
-  [/restaurant|dîner|déjeuner|manger|repas|brunch|café|apéro/i, "🍽️"],
-  [/mail|email|courriel|message|envoyer|répondre/i, "📧"],
-  [/banque|virement|paiement|facture|impôts|argent|loyer|assurance/i, "💰"],
-  [/ménage|nettoyage|nettoyer|ranger|vaisselle|lessive|aspirateur/i, "🧹"],
-  [/livre|lire|lecture|étude|révision|cours|formation/i, "📚"],
-  [/clim|chauffage|plombier|électricien|réparation|bricolage/i, "🔧"],
-  [/anniversaire|fête|soirée|mariage|invitation|cadeau/i, "🎉"],
-  [/enfant|école|crèche|nounou|devoirs/i, "👨‍👩‍👧"],
-  [/pharmacie|médicament|ordonnance/i, "💊"],
+  [/sport|salle|gym|musculation|séance|entraînement|fitness|running|course à pied|jogging|vélo|natation|piscine|yoga|pilates|workout|gimnasio|palestra|тренировк|posilovn/i, "🏋️"],
+  [/courses?|supermarché|lidl|aldi|carrefour|leclerc|monoprix|intermarché|épicerie|marché|grocer|compra|spesa|покупк|nákup/i, "🛒"],
+  [/médecin|docteur|dentiste|kiné|ophtalmo|cardio|santé|hôpital|clinique|pharmacie|médicament|rdv médical|doctor|médico|medico|врач|lékař/i, "🏥"],
+  [/appel|appeler|téléphoner|contacter|rappeler|appel téléphonique|call|llamar|chiamare|звон|volat|hovor/i, "📞"],
+  [/réunion|meeting|conf|call|standup|présentation|brainstorm|entretien|interview|talent review|reunión|riunione|встреч|schůzk/i, "💼"],
+  [/avion|vol|billet|voyage|vacances|hôtel|airbnb|train|taxi|uber|aéroport|flight|travel|viaje|viaggio|поездк/i, "✈️"],
+  [/restaurant|dîner|déjeuner|manger|repas|brunch|café|apéro|dinner|lunch|cena|pranzo|ужин/i, "🍽️"],
+  [/mail|email|courriel|message|envoyer|répondre|correo|messaggio|письм|mejl/i, "📧"],
+  [/banque|virement|paiement|facture|impôts|argent|loyer|assurance|invoice|payment|factura|fattura|оплат|платеж|faktur/i, "💰"],
+  [/ménage|nettoyage|nettoyer|ranger|vaisselle|lessive|aspirateur|clean|limpieza|pulizia|уборк|úklid/i, "🧹"],
+  [/livre|lire|lecture|étude|révision|cours|formation|read|study|leer|estudio|leggere|читать/i, "📚"],
+  [/clim|chauffage|plombier|électricien|réparation|bricolage|repair|reparación|riparazione|ремонт/i, "🔧"],
+  [/anniversaire|fête|soirée|mariage|invitation|cadeau|birthday|party|fiesta|festa|праздник/i, "🎉"],
+  [/enfant|école|crèche|nounou|devoirs|school|child|escuela|scuola|школ|škol/i, "👨‍👩‍👧"],
+  [/pharmacie|médicament|ordonnance|pharmacy|farmacia|аптек|lékárn/i, "💊"],
 ];
 
 function getTaskEmoji(title: string): string {
@@ -32,8 +33,8 @@ function getTaskEmoji(title: string): string {
   return "📌";
 }
 
-function formatDateTimeFr(date: Date, timezone: string): string {
-  return new Intl.DateTimeFormat("fr-FR", {
+function formatDateTime(date: Date, timezone: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
     timeZone: timezone,
     day: "numeric",
     month: "long",
@@ -47,103 +48,114 @@ export class ResponseService {
     return task.displayId != null ? `#${task.displayId} ` : "";
   }
 
-  format(result: ActionResult, timezone: string): string {
+  format(result: ActionResult, timezone: string, lang: Language): string {
+    const d = getBotDict(lang);
     switch (result.type) {
       case "task_created":
-        return this.formatTaskCreated(result.task!, timezone);
+        return this.formatTaskCreated(result.task!, timezone, d);
 
       case "tasks_created":
-        return this.formatTasksCreated(result.tasks ?? [], timezone);
+        return this.formatTasksCreated(result.tasks ?? [], timezone, d);
 
       case "task_updated":
-        return this.formatTaskUpdated(result.task!);
+        return this.formatTaskUpdated(result.task!, d);
 
       case "task_deleted":
-        return `C'est fait ! J'ai supprimé ${this.idLabel(result.task!)}« ${result.task!.title} ».`;
+        return d.taskDeleted(this.idLabel(result.task!), result.task!.title);
 
-      case "tasks_deleted": {
-        const titles = (result.tasks ?? []).map((t) => `« ${t.title} »`).join(" et ");
-        return `C'est fait ! J'ai supprimé ${titles}.`;
-      }
+      case "tasks_deleted":
+        return d.tasksDeleted(d.joinAnd((result.tasks ?? []).map((t) => `« ${t.title} »`)));
 
       case "task_done":
-        return `Bravo 👍 « ${result.task!.title} » est marquée comme terminée.`;
+        return d.taskDone(result.task!.title);
 
-      case "tasks_done": {
-        const titles = (result.tasks ?? []).map((t) => `« ${t.title} »`).join(" et ");
-        return `Bravo 👍 ${titles} sont marquées comme terminées.`;
-      }
+      case "tasks_done":
+        return d.tasksDone(d.joinAnd((result.tasks ?? []).map((t) => `« ${t.title} »`)));
 
       case "task_list":
-        return this.formatTaskList(result.tasks ?? [], timezone);
+        return this.formatTaskList(result.tasks ?? [], timezone, lang);
 
       case "timezone_updated":
-        return `Parfait ! Ton fuseau horaire est maintenant ${result.message}.`;
+        return d.timezoneUpdated(result.message ?? "");
 
       case "ambiguous_task":
-        return this.formatAmbiguous(result.tasks ?? []);
+        return this.formatAmbiguous(result.tasks ?? [], d);
 
       case "task_not_found":
-        return "Je n'ai pas trouvé de tâche correspondante. Peux-tu préciser ?";
+        return d.taskNotFound;
 
       case "unknown":
-        return "Je n'ai pas compris ta demande.";
+        return d.unknown;
 
       case "error":
-        return result.message ?? "Une erreur est survenue.";
+        return this.formatError(result, d);
 
       default:
-        return "Je n'ai pas compris ta demande.";
+        return d.unknown;
     }
   }
 
-  private formatTaskCreated(task: TaskSummary, timezone: string): string {
+  private formatError(result: ActionResult, d: BotDict): string {
+    switch (result.code) {
+      case "no_title":
+        return d.errNoTitle;
+      case "invalid_timezone":
+        return d.errInvalidTimezone(result.message ?? "");
+      case "timezone_missing":
+        return d.errTimezoneMissing;
+      default:
+        return result.message ?? d.genericError;
+    }
+  }
+
+  private formatTaskCreated(task: TaskSummary, timezone: string, d: BotDict): string {
     const tag = task.displayId != null ? `\n\n🆔 #${task.displayId}` : "";
 
     if (!task.date) {
-      return `C'est noté !\n\nJ'ai ajouté « ${task.title} » à ta liste.${tag}`;
+      return d.taskCreatedNoDate(task.title, tag);
     }
 
-    const dateLabel = this.relativeDateLabel(task.date, timezone);
+    const dateLabel = this.relativeDateLabel(task.date, timezone, d);
 
     if (task.time) {
-      return `Parfait 👍\n\nJe te rappellerai ${dateLabel} à ${task.time} pour « ${task.title} ».${tag}`;
+      return d.taskCreatedTime(dateLabel, task.time, task.title, tag);
     }
 
     if (task.period) {
-      const periodLabel = getPeriodLabel(task.period as TaskPeriod);
-      return `Parfait 👍\n\nJe te rappellerai ${dateLabel} ${periodLabel} pour « ${task.title} ».${tag}`;
+      const periodLabel = d.periods[task.period as TaskPeriod];
+      return d.taskCreatedPeriod(dateLabel, periodLabel, task.title, tag);
     }
 
-    return `Parfait 👍\n\nJe te rappellerai ${dateLabel} à 9h pour « ${task.title} ».${tag}`;
+    return d.taskCreatedDefault(dateLabel, task.title, tag);
   }
 
-  private formatTasksCreated(tasks: TaskSummary[], timezone: string): string {
+  private formatTasksCreated(tasks: TaskSummary[], timezone: string, d: BotDict): string {
     if (tasks.length === 0) {
-      return "Je n'ai pas pu créer les tâches.";
+      return d.tasksCreatedEmpty;
     }
 
     const lines = tasks.map((task) => {
-      const schedule = this.formatTaskSchedule(task, timezone);
+      const schedule = this.formatTaskSchedule(task, timezone, d);
       return `• ${this.idLabel(task)}${task.title}${schedule ? ` — ${schedule}` : ""}`;
     });
 
-    return `Parfait 👍 J'ai créé ${tasks.length} tâches :\n\n${lines.join("\n")}`;
+    return `${d.tasksCreatedHeader(tasks.length)}\n\n${lines.join("\n")}`;
   }
 
-  private formatTaskUpdated(task: TaskSummary): string {
+  private formatTaskUpdated(task: TaskSummary, d: BotDict): string {
     if (task.date && task.time) {
-      return `C'est modifié ! « ${task.title} » est prévu le ${formatDateForDisplay(task.date)} à ${task.time}.`;
+      return d.taskUpdatedDateTime(task.title, formatDateForDisplay(task.date, d.locale), task.time);
     }
     if (task.date) {
-      return `C'est modifié ! « ${task.title} » est prévu le ${formatDateForDisplay(task.date)}.`;
+      return d.taskUpdatedDate(task.title, formatDateForDisplay(task.date, d.locale));
     }
-    return `C'est modifié ! « ${task.title} » a été mise à jour.`;
+    return d.taskUpdatedGeneric(task.title);
   }
 
-  formatTaskList(tasks: TaskSummary[], timezone: string): string {
+  formatTaskList(tasks: TaskSummary[], timezone: string, lang: Language): string {
+    const d = getBotDict(lang);
     if (tasks.length === 0) {
-      return "Tu n'as rien de prévu.";
+      return d.listEmpty;
     }
 
     // Group tasks by date (null → "no_date" bucket)
@@ -166,11 +178,11 @@ export class ResponseService {
     for (const key of sortedKeys) {
       const dayTasks = groups.get(key)!;
       const header = key === "no_date"
-        ? "📋 <b>Sans date</b>"
-        : `${this.dayEmoji(key, timezone)} <b>${this.dayLabel(key, timezone)}</b>`;
+        ? d.headerNoDate
+        : `${this.dayEmoji(key, timezone)} <b>${this.dayLabel(key, timezone, d)}</b>`;
 
       const lines = dayTasks.map((task) => {
-        const time = this.formatTaskTime(task);
+        const time = this.formatTaskTime(task, d);
         const emoji = getTaskEmoji(task.title);
         return `${emoji} ${this.idLabel(task)}${task.title}${time ? ` — ${time}` : ""}`;
       });
@@ -189,131 +201,85 @@ export class ResponseService {
     return "🗓";
   }
 
-  private dayLabel(dateStr: string, timezone: string): string {
+  private dayLabel(dateStr: string, timezone: string, d: BotDict): string {
     const today = getTodayInTimezone(timezone);
     const tomorrow = addDaysToDateString(today, 1);
-    if (dateStr === today) return "Aujourd'hui";
-    if (dateStr === tomorrow) return "Demain";
-    return formatDateForDisplay(dateStr);
+    if (dateStr === today) return d.todayCap;
+    if (dateStr === tomorrow) return d.tomorrowCap;
+    return formatDateForDisplay(dateStr, d.locale);
   }
 
   /** Returns only the time/period part of a task (no date). */
-  private formatTaskTime(task: TaskSummary): string {
+  private formatTaskTime(task: TaskSummary, d: BotDict): string {
     if (task.time) return task.time;
-    if (task.period) return getPeriodLabel(task.period as TaskPeriod);
+    if (task.period) return d.periods[task.period as TaskPeriod];
     return "";
   }
 
-  private formatTaskSchedule(task: TaskSummary, timezone: string): string {
+  private formatTaskSchedule(task: TaskSummary, timezone: string, d: BotDict): string {
     if (!task.date) {
-      return "sans date";
+      return d.scheduleNoDate;
     }
 
-    const dateLabel = this.relativeDateLabel(task.date, timezone);
+    const dateLabel = this.relativeDateLabel(task.date, timezone, d);
 
     if (task.time) {
-      return `${dateLabel} à ${task.time}`;
+      return `${dateLabel} ${d.atTime(task.time)}`;
     }
 
     if (task.period) {
-      return `${dateLabel} ${getPeriodLabel(task.period as TaskPeriod)}`;
+      return `${dateLabel} ${d.periods[task.period as TaskPeriod]}`;
     }
 
     return dateLabel;
   }
 
-  relativeDateLabel(dateStr: string, timezone: string): string {
+  relativeDateLabel(dateStr: string, timezone: string, d: BotDict): string {
     const today = getTodayInTimezone(timezone);
     const tomorrow = addDaysToDateString(today, 1);
 
     if (dateStr === today) {
-      return "aujourd'hui";
+      return d.today;
     }
     if (dateStr === tomorrow) {
-      return "demain";
+      return d.tomorrow;
     }
-    return `le ${formatDateForDisplay(dateStr)}`;
+    return d.onDate(formatDateForDisplay(dateStr, d.locale));
   }
 
-  private formatAmbiguous(tasks: TaskSummary[]): string {
+  private formatAmbiguous(tasks: TaskSummary[], d: BotDict): string {
     const lines = tasks.map((task, index) => {
       const ref = task.displayId != null ? `#${task.displayId}` : `${index + 1}.`;
       return `${ref} ${task.title}`;
     });
-    return `J'ai trouvé plusieurs tâches. Laquelle ? Réponds avec son numéro (ex : « ${
-      tasks[0]?.displayId ?? 1
-    } »).\n\n${lines.join("\n")}`;
+    return d.ambiguous(tasks[0]?.displayId ?? 1, lines.join("\n"));
   }
 
-  formatWelcome(): string {
-    return `Salut ! Je suis TCopilot, ton assistant personnel.
-
-Tu peux me parler naturellement :
-• « Rappelle-moi d'appeler le médecin mardi à 15h »
-• « Demain faut que je fasse la salle et les courses »
-• « J'ai terminé ma séance »
-• « Qu'est-ce que j'ai aujourd'hui ? »
-• « Supprime la tâche 3 »
-
-Commandes : /help /today /tomorrow /week /month /tasks /done /delete /subscribe /status`;
+  formatWelcome(lang: Language): string {
+    return getBotDict(lang).welcome;
   }
 
-  formatHelp(priceInStars: number): string {
-    return `📖 <b>Comment utiliser TCopilot</b>
-
-Parle-moi naturellement, en texte ou en vocal 🎙 :
-• « Rappelle-moi d'appeler le médecin mardi à 15h »
-• « Demain : salle de sport et courses » (plusieurs tâches d'un coup)
-• « J'ai fait les courses » → marque la tâche comme terminée
-• « Déplace l'appel médecin à demain 16h »
-• « Qu'est-ce que j'ai cette semaine ? »
-
-🆔 <b>Gérer par numéro</b>
-Chaque tâche a un numéro (#1, #2, #3…) affiché dans tes listes.
-• <code>/delete 3</code> — supprime la tâche #3
-• <code>/done 3</code> — marque la tâche #3 comme terminée
-• Quand plusieurs tâches se ressemblent, je te demande laquelle : réponds simplement avec son numéro.
-
-📋 <b>Commandes</b>
-/today — Tâches du jour
-/tomorrow — Tâches de demain
-/week — Tâches des 7 prochains jours
-/month — Tâches du mois
-/tasks — Toutes les tâches
-/done [n] — Marquer terminée (numéro, ou en réponse à un message)
-/delete [n] — Supprimer (numéro, ou en réponse à un message)
-/subscribe — S'abonner à TCopilot Premium (${priceInStars} ⭐/mois)
-/status — État de ton abonnement
-
-💡 Astuce : règle ton fuseau horaire en disant « je suis à Montréal ».`;
+  formatHelp(priceInStars: number, lang: Language): string {
+    return getBotDict(lang).help(priceInStars);
   }
 
-  formatPaywall(priceInStars: number): string {
-    return `🔒 <b>TCopilot Premium</b>
-
-Pour utiliser ton assistant, il te faut un abonnement actif.
-
-✨ <b>${priceInStars} ⭐ / mois</b> — renouvellement automatique, annulable à tout moment dans Telegram.
-
-Appuie sur /subscribe pour t'abonner en quelques secondes. ⭐`;
+  formatPaywall(priceInStars: number, lang: Language): string {
+    return getBotDict(lang).paywall(priceInStars);
   }
 
-  formatSubscriptionInvoiceIntro(priceInStars: number): string {
-    return `Voici ta facture pour TCopilot Premium (${priceInStars} ⭐/mois). Confirme le paiement ci-dessous pour activer ton accès. ✨`;
+  formatSubscriptionInvoiceIntro(priceInStars: number, lang: Language): string {
+    return getBotDict(lang).subscriptionIntro(priceInStars);
   }
 
   formatSubscriptionSuccess(
     expiresAt: Date | null,
     timezone: string,
-    isFirst: boolean
+    isFirst: boolean,
+    lang: Language
   ): string {
-    const until = expiresAt
-      ? `\n\nProchain renouvellement : ${formatDateTimeFr(expiresAt, timezone)}.`
-      : "";
-    if (isFirst) {
-      return `Merci et bienvenue dans TCopilot Premium ! 🎉\n\nTon accès est maintenant actif.${until}`;
-    }
-    return `Abonnement renouvelé, merci de ta confiance ! 💙${until}`;
+    const d = getBotDict(lang);
+    const until = expiresAt ? d.nextRenewal(formatDateTime(expiresAt, timezone, d.locale)) : "";
+    return isFirst ? d.subscriptionSuccessFirst(until) : d.subscriptionRenewed(until);
   }
 
   formatStatus(
@@ -324,36 +290,35 @@ Appuie sur /subscribe pour t'abonner en quelques secondes. ⭐`;
     },
     timezone: string,
     isAdmin: boolean,
-    priceInStars: number
+    priceInStars: number,
+    lang: Language
   ): string {
+    const d = getBotDict(lang);
     if (isAdmin) {
-      return "👑 Tu es administrateur : accès complet et illimité.";
+      return d.statusAdmin;
     }
+    const dateLabel = status.expiresAt ? formatDateTime(status.expiresAt, timezone, d.locale) : "—";
     switch (status.reason) {
       case "whitelist":
-        return "✅ Accès Premium offert (à vie). Profite bien ! 💙";
+        return d.statusWhitelist;
       case "subscription":
-        return `✅ Abonnement Premium actif.\n\nProchain renouvellement : ${
-          status.expiresAt ? formatDateTimeFr(status.expiresAt, timezone) : "—"
-        }.`;
+        return d.statusSubscription(dateLabel);
       case "trial":
-        return `🎁 Essai gratuit en cours jusqu'au ${
-          status.expiresAt ? formatDateTimeFr(status.expiresAt, timezone) : "—"
-        }.\n\nAbonne-toi avec /subscribe (${priceInStars} ⭐/mois) pour continuer ensuite.`;
+        return d.statusTrial(dateLabel, priceInStars);
       default:
-        return `❌ Aucun abonnement actif.\n\nAbonne-toi avec /subscribe (${priceInStars} ⭐/mois).`;
+        return d.statusNone(priceInStars);
     }
   }
 
-  formatGranted(telegramUserId: bigint): string {
-    return `✅ Accès Premium offert à l'utilisateur ${telegramUserId}.`;
+  formatGranted(telegramUserId: bigint, lang: Language): string {
+    return getBotDict(lang).granted(telegramUserId.toString());
   }
 
-  formatRevoked(telegramUserId: bigint): string {
-    return `🚫 Accès Premium retiré à l'utilisateur ${telegramUserId}.`;
+  formatRevoked(telegramUserId: bigint, lang: Language): string {
+    return getBotDict(lang).revoked(telegramUserId.toString());
   }
 
-  formatAdminUsage(command: string): string {
-    return `Usage : /${command} <telegram_user_id>`;
+  formatAdminUsage(command: string, lang: Language): string {
+    return getBotDict(lang).adminUsage(command);
   }
 }

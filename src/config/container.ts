@@ -1,4 +1,5 @@
 import type { BotContext } from "../types/intent";
+import { resolveLanguage } from "../lib/i18n";
 import { UserRepository } from "../repositories/user.repository";
 import { TaskRepository } from "../repositories/task.repository";
 import { QuestionLogRepository } from "../repositories/question-log.repository";
@@ -48,10 +49,12 @@ export function createServices(): AppServices {
 
 export async function resolveBotContext(
   services: AppServices,
-  telegramUserId: bigint
+  telegramUserId: bigint,
+  languageCode?: string | null
 ): Promise<BotContext> {
   const user = await services.userRepository.findOrCreateByTelegramId(
-    telegramUserId
+    telegramUserId,
+    languageCode
   );
 
   const isAdmin = getAdminUserIds().has(telegramUserId);
@@ -62,6 +65,7 @@ export async function resolveBotContext(
     userId: user.id,
     telegramUserId: user.telegramUserId,
     timezone: user.timezone,
+    language: resolveLanguage(user.language),
     isAdmin,
     hasPremium,
     isWhitelisted: user.isWhitelisted,

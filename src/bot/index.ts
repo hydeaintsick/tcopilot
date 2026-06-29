@@ -3,12 +3,14 @@ import type { AppServices } from "../config/container";
 import { resolveBotContext } from "../config/container";
 import { env } from "../config/env";
 import type { BotContext as AppBotContext, ConversationMessage, PendingAmbiguous, TaskSummary } from "../types/intent";
+import { getBotDict, type BotDict } from "../i18n/bot-messages";
+import { LANGUAGES, resolveLanguage, type Language } from "../lib/i18n";
 import { PrismaSessionStorage } from "./session-storage";
 
 const HISTORY_MAX = 6; // 3 échanges user/assistant
 
 /** Commandes accessibles sans abonnement (point d'entrée + tunnel de paiement). */
-const PUBLIC_COMMANDS = new Set(["start", "help", "subscribe", "status"]);
+const PUBLIC_COMMANDS = new Set(["start", "help", "subscribe", "status", "language"]);
 
 interface SessionData {
   lastTaskId?: string;
@@ -21,6 +23,11 @@ export type BotContextType = Context & {
   appServices: AppServices;
   appContext: AppBotContext;
 };
+
+/** Langue de l'utilisateur courant (repli anglais si le contexte n'est pas prêt). */
+function langOf(ctx: BotContextType): Language {
+  return ctx.appContext?.language ?? "en";
+}
 
 /** Extrait l'identifiant lisible (#3) d'un message auquel l'utilisateur répond. */
 function extractDisplayIdFromReply(ctx: BotContextType): number | null {
@@ -52,6 +59,8 @@ function commandName(ctx: BotContextType): string | null {
 function isPublicEntry(ctx: BotContextType): boolean {
   if (ctx.preCheckoutQuery) return true;
   if (ctx.message?.successful_payment) return true;
+  // Le choix de langue reste accessible sans abonnement (y compris via boutons).
+  if (ctx.callbackQuery?.data?.startsWith("lang:")) return true;
   const cmd = commandName(ctx);
   return cmd !== null && PUBLIC_COMMANDS.has(cmd);
 }
@@ -73,7 +82,7 @@ function pushHistory(session: SessionData, userText: string, botText: string): v
 function resolveDisambiguation(text: string, tasks: TaskSummary[]): TaskSummary[] | null {
   const t = text.toLowerCase().trim();
 
-  if (/^(les deux|les 2|tous|toutes|tout|all)$/.test(t)) {
+  if (/^(les deux|les 2|tous|toutes|tout|all|both|todos|todas|tutti|tutte|все|оба|všechny|oba)$/.test(t)) {
     return tasks;
   }
 
@@ -93,9 +102,9 @@ function resolveDisambiguation(text: string, tasks: TaskSummary[]): TaskSummary[
   }
 
   const ordinalPatterns: Array<[RegExp, number]> = [
-    [/^(le premier|la première|le 1er|la 1ère|le n[°o]1)$/, 0],
-    [/^(le deuxi[eè]me|la deuxi[eè]me|le second|la seconde|le n[°o]2)$/, 1],
-    [/^(le troisi[eè]me|la troisi[eè]me|le n[°o]3)$/, 2],
+    [/^(le premier|la première|le 1er|la 1ère|le n[°o]1|the first|el primero|il primo|первый|první)$/, 0],
+    [/^(le deuxi[eè]me|la deuxi[eè]me|le second|la seconde|le n[°o]2|the second|el segundo|il secondo|второй|druhý)$/, 1],
+    [/^(le troisi[eè]me|la troisi[eè]me|le n[°o]3|the third|el tercero|il terzo|третий|třetí)$/, 2],
   ];
   for (const [pattern, index] of ordinalPatterns) {
     if (pattern.test(t) && tasks[index]) {
@@ -118,14 +127,25 @@ function startTyping(ctx: BotContextType): () => void {
   return () => clearInterval(interval);
 }
 
-function buildNavKeyboard(): InlineKeyboard {
+function buildNavKeyboard(d: BotDict): InlineKeyboard {
   return new InlineKeyboard()
-    .text("📅 Aujourd'hui", "nav:today")
-    .text("📆 Demain", "nav:tomorrow")
+    .text(d.navToday, "nav:today")
+    .text(d.navTomorrow, "nav:tomorrow")
     .row()
-    .text("🗗 Semaine", "nav:week")
-    .text("🗓 Mois", "nav:month")
-    .text("📋 Tout", "nav:all");
+    .text(d.navWeek, "nav:week")
+    .text(d.navMonth, "nav:month")
+    .text(d.navAll, "nav:all");
+}
+
+/** Clavier de sélection de langue : chaque bouton affiche le nom natif de la langue. */
+function buildLanguageKeyboard(): InlineKeyboard {
+  const keyboard = new InlineKeyboard();
+  LANGUAGES.forEach((lang, index) => {
+    keyboard.text(getBotDict(lang.code).pickerName, `lang:${lang.code}`);
+    // Deux langues par ligne pour un rendu compact.
+    if (index % 2 === 1) keyboard.row();
+  });
+  return keyboard;
 }
 
 export function createBot(services: AppServices): Bot<BotContextType> {
@@ -143,7 +163,8 @@ export function createBot(services: AppServices): Bot<BotContextType> {
     if (ctx.from) {
       ctx.appContext = await resolveBotContext(
         services,
-        BigInt(ctx.from.id)
+        BigInt(ctx.from.id),
+        ctx.from.language_code
       );
     }
     await next();
@@ -161,25 +182,44 @@ export function createBot(services: AppServices): Bot<BotContextType> {
     }
     await ctx.reply(
       services.responseService.formatPaywall(
-        services.subscriptionService.priceInStars
+        services.subscriptionService.priceInStars,
+        langOf(ctx)
       ),
       { parse_mode: "HTML" }
     );
   });
 
   bot.command("start", async (ctx) => {
-    await ctx.reply(services.responseService.formatWelcome(), {
-      reply_markup: buildNavKeyboard(),
+    await ctx.reply(services.responseService.formatWelcome(langOf(ctx)), {
+      reply_markup: buildNavKeyboard(getBotDict(langOf(ctx))),
     });
   });
 
   bot.command("help", async (ctx) => {
     await ctx.reply(
       services.responseService.formatHelp(
-        services.subscriptionService.priceInStars
+        services.subscriptionService.priceInStars,
+        langOf(ctx)
       ),
       { parse_mode: "HTML" }
     );
+  });
+
+  // Sélection de langue : ouvre un clavier avec les langues proposées.
+  bot.command("language", async (ctx) => {
+    await ctx.reply(getBotDict(langOf(ctx)).languagePrompt, {
+      reply_markup: buildLanguageKeyboard(),
+    });
+  });
+
+  bot.callbackQuery(/^lang:(.+)$/, async (ctx) => {
+    if (!ctx.appContext) return;
+    const code = resolveLanguage(ctx.match[1]);
+    await services.userService.updateLanguage(ctx.appContext.userId, code);
+    ctx.appContext.language = code;
+    await ctx.answerCallbackQuery().catch(() => {});
+    const d = getBotDict(code);
+    await ctx.reply(d.languageSet, { reply_markup: buildNavKeyboard(d) });
   });
 
   bot.command("subscribe", async (ctx) => {
@@ -196,7 +236,8 @@ export function createBot(services: AppServices): Bot<BotContextType> {
           status,
           ctx.appContext.timezone,
           ctx.appContext.isAdmin,
-          services.subscriptionService.priceInStars
+          services.subscriptionService.priceInStars,
+          ctx.appContext.language
         ),
         { parse_mode: "HTML" }
       );
@@ -216,12 +257,13 @@ export function createBot(services: AppServices): Bot<BotContextType> {
       { subscription_period: invoice.subscriptionPeriod }
     );
     const keyboard = new InlineKeyboard().url(
-      `⭐ S'abonner — ${services.subscriptionService.priceInStars} ⭐/mois`,
+      getBotDict(langOf(ctx)).subscribeButton(services.subscriptionService.priceInStars),
       link
     );
     await ctx.reply(
       services.responseService.formatSubscriptionInvoiceIntro(
-        services.subscriptionService.priceInStars
+        services.subscriptionService.priceInStars,
+        langOf(ctx)
       ),
       { reply_markup: keyboard }
     );
@@ -239,7 +281,8 @@ export function createBot(services: AppServices): Bot<BotContextType> {
         status,
         ctx.appContext.timezone,
         ctx.appContext.isAdmin,
-        services.subscriptionService.priceInStars
+        services.subscriptionService.priceInStars,
+        ctx.appContext.language
       ),
       { parse_mode: "HTML" }
     );
@@ -250,22 +293,22 @@ export function createBot(services: AppServices): Bot<BotContextType> {
     if (!ctx.appContext?.isAdmin) return;
     const targetId = parseTelegramId(ctx.match ?? "");
     if (targetId === null) {
-      await ctx.reply(services.responseService.formatAdminUsage("grant"));
+      await ctx.reply(services.responseService.formatAdminUsage("grant", ctx.appContext.language));
       return;
     }
     await services.subscriptionService.grant(targetId);
-    await ctx.reply(services.responseService.formatGranted(targetId));
+    await ctx.reply(services.responseService.formatGranted(targetId, ctx.appContext.language));
   });
 
   bot.command("revoke", async (ctx) => {
     if (!ctx.appContext?.isAdmin) return;
     const targetId = parseTelegramId(ctx.match ?? "");
     if (targetId === null) {
-      await ctx.reply(services.responseService.formatAdminUsage("revoke"));
+      await ctx.reply(services.responseService.formatAdminUsage("revoke", ctx.appContext.language));
       return;
     }
     await services.subscriptionService.revoke(targetId);
-    await ctx.reply(services.responseService.formatRevoked(targetId));
+    await ctx.reply(services.responseService.formatRevoked(targetId, ctx.appContext.language));
   });
 
   // Réponses au tunnel de paiement Telegram Stars.
@@ -292,7 +335,8 @@ export function createBot(services: AppServices): Bot<BotContextType> {
       services.responseService.formatSubscriptionSuccess(
         updated.subscriptionExpiresAt,
         ctx.appContext.timezone,
-        payment.is_first_recurring ?? false
+        payment.is_first_recurring ?? false,
+        ctx.appContext.language
       )
     );
   });
@@ -304,8 +348,8 @@ export function createBot(services: AppServices): Bot<BotContextType> {
       ctx.appContext.timezone
     );
     await ctx.reply(
-      services.responseService.format(result, ctx.appContext.timezone),
-      { parse_mode: "HTML", reply_markup: buildNavKeyboard() }
+      services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language),
+      { parse_mode: "HTML", reply_markup: buildNavKeyboard(getBotDict(ctx.appContext.language)) }
     );
   });
 
@@ -316,34 +360,36 @@ export function createBot(services: AppServices): Bot<BotContextType> {
       ctx.appContext.timezone
     );
     await ctx.reply(
-      services.responseService.format(result, ctx.appContext.timezone),
-      { parse_mode: "HTML", reply_markup: buildNavKeyboard() }
+      services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language),
+      { parse_mode: "HTML", reply_markup: buildNavKeyboard(getBotDict(ctx.appContext.language)) }
     );
   });
 
   bot.command("week", async (ctx) => {
     if (!ctx.appContext) return;
+    const d = getBotDict(ctx.appContext.language);
     const result = await services.taskService.listWeek(
       ctx.appContext.userId,
       ctx.appContext.timezone
     );
-    const body = services.responseService.format(result, ctx.appContext.timezone);
-    await ctx.reply(`📆 <b>Semaine</b>\n\n${body}`, {
+    const body = services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language);
+    await ctx.reply(`📆 <b>${d.sectionWeek}</b>\n\n${body}`, {
       parse_mode: "HTML",
-      reply_markup: buildNavKeyboard(),
+      reply_markup: buildNavKeyboard(d),
     });
   });
 
   bot.command("month", async (ctx) => {
     if (!ctx.appContext) return;
+    const d = getBotDict(ctx.appContext.language);
     const result = await services.taskService.listMonth(
       ctx.appContext.userId,
       ctx.appContext.timezone
     );
-    const body = services.responseService.format(result, ctx.appContext.timezone);
-    await ctx.reply(`🗓 <b>Mois</b>\n\n${body}`, {
+    const body = services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language);
+    await ctx.reply(`🗓 <b>${d.sectionMonth}</b>\n\n${body}`, {
       parse_mode: "HTML",
-      reply_markup: buildNavKeyboard(),
+      reply_markup: buildNavKeyboard(d),
     });
   });
 
@@ -351,8 +397,8 @@ export function createBot(services: AppServices): Bot<BotContextType> {
     if (!ctx.appContext) return;
     const result = await services.taskService.listAll(ctx.appContext.userId);
     await ctx.reply(
-      services.responseService.format(result, ctx.appContext.timezone),
-      { parse_mode: "HTML", reply_markup: buildNavKeyboard() }
+      services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language),
+      { parse_mode: "HTML", reply_markup: buildNavKeyboard(getBotDict(ctx.appContext.language)) }
     );
   });
 
@@ -379,14 +425,12 @@ export function createBot(services: AppServices): Bot<BotContextType> {
         ctx.session.lastTaskId
       );
     } else {
-      await ctx.reply(
-        "Indique le numéro de la tâche (ex : /done 3) ou réponds à un message de tâche."
-      );
+      await ctx.reply(getBotDict(ctx.appContext.language).doneUsage);
       return;
     }
 
     await ctx.reply(
-      services.responseService.format(result, ctx.appContext.timezone)
+      services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language)
     );
   });
 
@@ -408,14 +452,12 @@ export function createBot(services: AppServices): Bot<BotContextType> {
         replyId
       );
     } else {
-      await ctx.reply(
-        "Indique le numéro de la tâche (ex : /delete 3) ou réponds à un message de tâche."
-      );
+      await ctx.reply(getBotDict(ctx.appContext.language).deleteUsage);
       return;
     }
 
     await ctx.reply(
-      services.responseService.format(result, ctx.appContext.timezone)
+      services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language)
     );
   });
 
@@ -428,61 +470,65 @@ export function createBot(services: AppServices): Bot<BotContextType> {
       ctx.appContext.timezone
     );
     await ctx.reply(
-      services.responseService.format(result, ctx.appContext.timezone),
-      { parse_mode: "HTML", reply_markup: buildNavKeyboard() }
+      services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language),
+      { parse_mode: "HTML", reply_markup: buildNavKeyboard(getBotDict(ctx.appContext.language)) }
     );
   });
 
   bot.callbackQuery("nav:tomorrow", async (ctx) => {
     if (!ctx.appContext) return;
+    const d = getBotDict(ctx.appContext.language);
     await ctx.answerCallbackQuery();
     const result = await services.taskService.listTomorrow(
       ctx.appContext.userId,
       ctx.appContext.timezone
     );
-    const body = services.responseService.format(result, ctx.appContext.timezone);
-    await ctx.reply(`📆 <b>Demain</b>\n\n${body}`, {
+    const body = services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language);
+    await ctx.reply(`📆 <b>${d.sectionTomorrow}</b>\n\n${body}`, {
       parse_mode: "HTML",
-      reply_markup: buildNavKeyboard(),
+      reply_markup: buildNavKeyboard(d),
     });
   });
 
   bot.callbackQuery("nav:week", async (ctx) => {
     if (!ctx.appContext) return;
+    const d = getBotDict(ctx.appContext.language);
     await ctx.answerCallbackQuery();
     const result = await services.taskService.listWeek(
       ctx.appContext.userId,
       ctx.appContext.timezone
     );
-    const body = services.responseService.format(result, ctx.appContext.timezone);
-    await ctx.reply(`📆 <b>Semaine</b>\n\n${body}`, {
+    const body = services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language);
+    await ctx.reply(`📆 <b>${d.sectionWeek}</b>\n\n${body}`, {
       parse_mode: "HTML",
-      reply_markup: buildNavKeyboard(),
+      reply_markup: buildNavKeyboard(d),
     });
   });
 
   bot.callbackQuery("nav:month", async (ctx) => {
     if (!ctx.appContext) return;
+    const d = getBotDict(ctx.appContext.language);
     await ctx.answerCallbackQuery();
     const result = await services.taskService.listMonth(
       ctx.appContext.userId,
       ctx.appContext.timezone
     );
-    const body = services.responseService.format(result, ctx.appContext.timezone);
-    await ctx.reply(`🗓 <b>Mois</b>\n\n${body}`, {
+    const body = services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language);
+    await ctx.reply(`🗓 <b>${d.sectionMonth}</b>\n\n${body}`, {
       parse_mode: "HTML",
-      reply_markup: buildNavKeyboard(),
+      reply_markup: buildNavKeyboard(d),
     });
   });
 
   bot.callbackQuery("nav:all", async (ctx) => {
     if (!ctx.appContext) return;
+    const d = getBotDict(ctx.appContext.language);
     await ctx.answerCallbackQuery();
     const result = await services.taskService.listAll(ctx.appContext.userId);
-    const body = services.responseService.format(result, ctx.appContext.timezone);
-    await ctx.reply(`📋 <b>Toutes les tâches</b>\n\n${body}`, {
+    const body = services.responseService.format(result, ctx.appContext.timezone, ctx.appContext.language);
+    await ctx.reply(`📋 <b>${d.sectionAll}</b>\n\n${body}`, {
       parse_mode: "HTML",
-      reply_markup: buildNavKeyboard(),
+      reply_markup: buildNavKeyboard(d),
     });
   });
 
@@ -509,22 +555,18 @@ export function createBot(services: AppServices): Bot<BotContextType> {
     } catch (error) {
       stopTyping();
       console.error("Voice transcription failed:", error);
-      await ctx.reply(
-        "Désolé, je n'ai pas réussi à comprendre ton message vocal. Tu peux réessayer ou l'écrire ?"
-      );
+      await ctx.reply(getBotDict(ctx.appContext.language).voiceError);
       return;
     }
     stopTyping();
 
     if (!text) {
-      await ctx.reply(
-        "Je n'ai rien entendu dans ce vocal. Tu peux réessayer ?"
-      );
+      await ctx.reply(getBotDict(ctx.appContext.language).voiceEmpty);
       return;
     }
 
     // On confirme ce qui a été compris, puis on traite la transcription.
-    await ctx.reply(`🎙 « ${text} »`);
+    await ctx.reply(getBotDict(ctx.appContext.language).voiceHeard(text));
     await handleUserText(ctx, services, text, "voice");
   });
 
@@ -533,24 +575,39 @@ export function createBot(services: AppServices): Bot<BotContextType> {
 
 /**
  * Déclare le menu de commandes visible par les utilisateurs (icône « / » de
- * Telegram). Les commandes admin (/grant, /revoke) en sont volontairement
- * absentes : elles ne doivent jamais apparaître pour un utilisateur.
+ * Telegram). Les slugs restent en anglais ; seules les descriptions sont
+ * traduites. On publie un jeu par langue supportée (scope `language_code`) plus
+ * un jeu par défaut en anglais. Les commandes admin (/grant, /revoke) en sont
+ * volontairement absentes : elles ne doivent jamais apparaître.
  */
 export async function configureBotCommands(
   bot: Bot<BotContextType>
 ): Promise<void> {
-  await bot.api.setMyCommands([
-    { command: "today", description: "Tâches du jour" },
-    { command: "tomorrow", description: "Tâches de demain" },
-    { command: "week", description: "Tâches des 7 prochains jours" },
-    { command: "month", description: "Tâches du mois" },
-    { command: "tasks", description: "Toutes les tâches" },
-    { command: "done", description: "Marquer une tâche terminée" },
-    { command: "delete", description: "Supprimer une tâche" },
-    { command: "subscribe", description: "S'abonner à TCopilot Premium" },
-    { command: "status", description: "État de mon abonnement" },
-    { command: "help", description: "Aide" },
-  ]);
+  const buildCommands = (d: BotDict) => [
+    { command: "today", description: d.commands.today },
+    { command: "tomorrow", description: d.commands.tomorrow },
+    { command: "week", description: d.commands.week },
+    { command: "month", description: d.commands.month },
+    { command: "tasks", description: d.commands.tasks },
+    { command: "done", description: d.commands.done },
+    { command: "delete", description: d.commands.delete },
+    { command: "subscribe", description: d.commands.subscribe },
+    { command: "status", description: d.commands.status },
+    { command: "language", description: d.commands.language },
+    { command: "help", description: d.commands.help },
+  ];
+
+  // Jeu par défaut (anglais), utilisé pour toute langue non explicitement définie.
+  await bot.api.setMyCommands(buildCommands(getBotDict("en")));
+
+  // Jeux localisés par langue Telegram de l'utilisateur.
+  await Promise.all(
+    LANGUAGES.map((lang) =>
+      bot.api.setMyCommands(buildCommands(getBotDict(lang.code)), {
+        language_code: lang.code,
+      })
+    )
+  );
 }
 
 /**
@@ -607,12 +664,13 @@ async function handleUserText(
   source: "text" | "voice"
 ): Promise<void> {
   if (!ctx.appContext) return;
+  const lang = ctx.appContext.language;
 
   const stopTyping = startTyping(ctx);
   try {
     // --- Résolution de désambiguïsation en attente ---
     if (ctx.session.pendingAmbiguous) {
-      const { action, tasks, intent } = ctx.session.pendingAmbiguous;
+      const { action, tasks } = ctx.session.pendingAmbiguous;
       const selected = resolveDisambiguation(text, tasks);
 
       if (selected !== null) {
@@ -628,7 +686,7 @@ async function handleUserText(
           result = await services.taskService.markDone(ctx.appContext.userId, selected[0].id);
         }
 
-        const responseText = services.responseService.format(result, ctx.appContext.timezone);
+        const responseText = services.responseService.format(result, ctx.appContext.timezone, lang);
         pushHistory(ctx.session, text, responseText);
         await ctx.reply(responseText);
         return;
@@ -658,7 +716,7 @@ async function handleUserText(
       if (tzResult.type === "timezone_updated") {
         ctx.appContext.timezone = intent.timezone;
       }
-      const responseText = services.responseService.format(tzResult, ctx.appContext.timezone);
+      const responseText = services.responseService.format(tzResult, ctx.appContext.timezone, lang);
       pushHistory(ctx.session, text, responseText);
       await ctx.reply(responseText);
       return;
@@ -682,13 +740,13 @@ async function handleUserText(
 
     const isListResult = result.type === "task_list" || result.type === "tasks_created";
 
-    const responseText = services.responseService.format(result, ctx.appContext.timezone);
+    const responseText = services.responseService.format(result, ctx.appContext.timezone, lang);
     pushHistory(ctx.session, text, responseText);
 
     await ctx.reply(
       responseText,
       isListResult
-        ? { parse_mode: "HTML", reply_markup: buildNavKeyboard() }
+        ? { parse_mode: "HTML", reply_markup: buildNavKeyboard(getBotDict(lang)) }
         : {}
     );
   } finally {

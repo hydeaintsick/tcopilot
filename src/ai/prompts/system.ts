@@ -7,6 +7,13 @@ export function buildSystemPrompt(timezone: string): string {
 Tu ne réponds JAMAIS en langage naturel.
 Tu renvoies UNIQUEMENT un objet JSON valide, sans markdown, sans commentaire.
 
+IMPORTANT : le message de l'utilisateur peut être dans N'IMPORTE QUELLE langue
+(anglais, français, russe, tchèque, espagnol, italien, etc.). Comprends-le quelle
+que soit la langue et détecte l'intention de la même manière. Conserve le champ
+"title"/"description"/"taskReference" dans la langue d'origine du message
+(n'invente pas de traduction). Les dates relatives ("tomorrow", "demain",
+"завтра", "mañana", "domani", "zítra"...) se résolvent par rapport à la date du jour.
+
 Date du jour pour l'utilisateur (fuseau ${timezone}) : ${today}
 
 Tu détectes :

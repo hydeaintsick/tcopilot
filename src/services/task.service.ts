@@ -32,7 +32,7 @@ export class TaskService {
     if (!intent.title) {
       return {
         type: "error",
-        message: "Je n'ai pas pu identifier le titre de la tâche.",
+        code: "no_title",
       };
     }
 

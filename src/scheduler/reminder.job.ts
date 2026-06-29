@@ -1,5 +1,6 @@
 import type { Api, RawApi } from "grammy";
 import type { TaskRepository } from "../repositories/task.repository";
+import { getBotDict } from "../i18n/bot-messages";
 
 type TelegramApi = Pick<Api<RawApi>, "sendMessage">;
 
@@ -19,11 +20,9 @@ export async function processDueReminders(
   for (const task of dueTasks) {
     try {
       const chatId = Number(task.user.telegramUserId);
-      const timeLabel = task.time ? ` à ${task.time}` : "";
-      await api.sendMessage(
-        chatId,
-        `⏰ Dans 30 min : ${task.title}${timeLabel}`
-      );
+      const dict = getBotDict(task.user.language);
+      const timeLabel = task.time ? dict.reminderAtTime(task.time) : "";
+      await api.sendMessage(chatId, dict.reminderDue(task.title, timeLabel));
       await taskRepository.markNotified(task.id);
       sent++;
     } catch (error) {

@@ -13,7 +13,8 @@ export class UserService {
     if (!isValidTimezone(timezone)) {
       return {
         type: "error",
-        message: `Le fuseau horaire "${timezone}" n'est pas valide. Utilise un fuseau IANA (ex: Europe/Paris).`,
+        code: "invalid_timezone",
+        message: timezone,
       };
     }
 
@@ -23,6 +24,10 @@ export class UserService {
       type: "timezone_updated",
       message: timezone,
     };
+  }
+
+  async updateLanguage(userId: string, language: string): Promise<void> {
+    await this.userRepository.updateLanguage(userId, language);
   }
 }
 

@@ -60,9 +60,9 @@ export function parseDateString(dateStr: string): Date {
   return new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
 }
 
-export function formatDateForDisplay(dateStr: string): string {
+export function formatDateForDisplay(dateStr: string, locale = "fr-FR"): string {
   const date = parseDateString(dateStr);
-  return new Intl.DateTimeFormat("fr-FR", {
+  return new Intl.DateTimeFormat(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",

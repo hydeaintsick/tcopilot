@@ -1,6 +1,7 @@
 import type { User } from "@prisma/client";
 import { prisma } from "../config/prisma";
 import { env } from "../config/env";
+import { resolveLanguage } from "../lib/i18n";
 
 export interface SubscriptionUpdate {
   expiresAt: Date;
@@ -9,7 +10,10 @@ export interface SubscriptionUpdate {
 }
 
 export class UserRepository {
-  async findOrCreateByTelegramId(telegramUserId: bigint): Promise<User> {
+  async findOrCreateByTelegramId(
+    telegramUserId: bigint,
+    languageCode?: string | null
+  ): Promise<User> {
     const existing = await prisma.user.findUnique({
       where: { telegramUserId },
     });
@@ -24,8 +28,19 @@ export class UserRepository {
         ? new Date(Date.now() + trialDays * 24 * 60 * 60 * 1000)
         : null;
 
+    // Langue initiale : on s'aligne sur celle de Telegram si elle fait partie
+    // des langues supportées, sinon repli sur l'anglais (défaut).
+    const language = resolveLanguage(languageCode);
+
     return prisma.user.create({
-      data: { telegramUserId, trialEndsAt },
+      data: { telegramUserId, trialEndsAt, language },
+    });
+  }
+
+  async updateLanguage(userId: string, language: string): Promise<User> {
+    return prisma.user.update({
+      where: { id: userId },
+      data: { language },
     });
   }
 

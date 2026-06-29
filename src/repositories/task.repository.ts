@@ -123,7 +123,9 @@ export class TaskRepository {
     });
   }
 
-  async findDueReminders(now: Date): Promise<(Task & { user: { telegramUserId: bigint } })[]> {
+  async findDueReminders(
+    now: Date
+  ): Promise<(Task & { user: { telegramUserId: bigint; language: string } })[]> {
     return prisma.task.findMany({
       where: {
         status: "TODO",
@@ -131,7 +133,7 @@ export class TaskRepository {
         notifiedAt: null,
       },
       include: {
-        user: { select: { telegramUserId: true } },
+        user: { select: { telegramUserId: true, language: true } },
       },
     });
   }

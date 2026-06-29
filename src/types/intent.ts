@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { TaskPeriod, TaskPriority } from "@prisma/client";
+import type { Language } from "../lib/i18n";
 
 export const INTENT_TYPES = [
   "create_task",
@@ -75,6 +76,8 @@ export type ActionResultType =
 export interface ActionResult {
   type: ActionResultType;
   message?: string;
+  // Code d'erreur stable, localisé côté ResponseService (indépendant de la langue).
+  code?: "no_title" | "invalid_timezone" | "timezone_missing";
   tasks?: TaskSummary[];
   task?: TaskSummary;
 }
@@ -95,6 +98,7 @@ export interface BotContext {
   userId: string;
   telegramUserId: bigint;
   timezone: string;
+  language: Language;
   isAdmin: boolean;
   hasPremium: boolean;
   isWhitelisted: boolean;
