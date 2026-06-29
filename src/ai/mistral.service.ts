@@ -61,6 +61,7 @@ export class MistralService {
           priority: null,
           taskReference: null,
           timezone: null,
+          language: null,
         };
       }
     }

@@ -15,6 +15,7 @@ export const INTENT_TYPES = [
   "delete_task",
   "complete_task",
   "set_timezone",
+  "set_language",
   "unknown",
 ] as const;
 
@@ -53,6 +54,9 @@ export const parsedIntentSchema = z.object({
   priority: z.nativeEnum(TaskPriority).nullable(),
   taskReference: z.string().nullable(),
   timezone: z.string().nullable(),
+  // Code de langue (en, fr, ru, cs, es, it) quand l'utilisateur demande à
+  // changer la langue d'interface du bot. null si non concerné.
+  language: z.string().nullable().optional(),
   tasks: z.array(taskItemSchema).nullable().optional(),
 });
 

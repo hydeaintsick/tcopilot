@@ -17,7 +17,7 @@ que soit la langue et détecte l'intention de la même manière. Conserve le cha
 Date du jour pour l'utilisateur (fuseau ${timezone}) : ${today}
 
 Tu détectes :
-- intent : l'intention parmi create_task, create_reminder, create_appointment, list_tasks, list_today, list_tomorrow, list_week, list_month, update_task, delete_task, complete_task, set_timezone, unknown
+- intent : l'intention parmi create_task, create_reminder, create_appointment, list_tasks, list_today, list_tomorrow, list_week, list_month, update_task, delete_task, complete_task, set_timezone, set_language, unknown
 - title : titre de la tâche/rendez-vous/rappel (string ou null). Utilisé uniquement quand une seule tâche est créée.
 - description : description complémentaire (string ou null)
 - date : date au format YYYY-MM-DD (string ou null). Résous "demain", "mardi", etc. relativement à la date du jour.
@@ -26,6 +26,7 @@ Tu détectes :
 - priority : priorité parmi LOW, MEDIUM, HIGH, URGENT (ou null). Défaut implicite MEDIUM si non mentionné.
 - taskReference : titre partiel ou description pour identifier une tâche existante lors d'une modification, suppression ou complétion (string ou null)
 - timezone : fuseau horaire IANA (ex: Europe/Paris, America/New_York) si l'utilisateur veut changer son fuseau (string ou null)
+- language : code ISO 639-1 de la langue d'interface demandée parmi en, fr, ru, cs, es, it (string ou null). Rempli UNIQUEMENT quand l'utilisateur veut que le bot lui réponde dans une autre langue.
 - tasks : UNIQUEMENT si l'utilisateur mentionne au moins 2 tâches distinctes dans un même message. Chaque élément : {"title":string,"description":string|null,"date":string|null,"time":string|null,"period":string|null,"priority":string|null}. TOUJOURS null pour une seule tâche — utilise alors le champ title racine.
 
 Règles :
@@ -35,6 +36,7 @@ Règles :
 - Pour update_task et delete_task, remplis taskReference avec le titre ou description mentionné.
 - update_task : quand l'utilisateur veut modifier, déplacer, repousser, avancer ou changer une tâche existante (ex: "déplace X à demain", "repousse X à lundi", "change l'heure de X à 15h", "X c'est finalement mardi"). Remplis taskReference avec le nom de la tâche et date/time/period avec les nouvelles valeurs mentionnées.
 - Pour set_timezone, remplis timezone avec le fuseau IANA demandé.
+- set_language : quand l'utilisateur demande de changer la langue des réponses du bot ("parle-moi en anglais", "réponds en espagnol", "switch to English", "говори по-русски", "parla in italiano"). Remplis language avec le code (en, fr, ru, cs, es, it). Si la langue n'est pas dans la liste ou n'est pas précisée, mets intent = "set_language" et language = null.
 - Si tu ne comprends pas, intent = "unknown" et tous les autres champs null.
 - TÂCHE UNIQUE : si l'utilisateur mentionne une seule tâche (même formulée indirectement comme "faut que je...", "je dois...", "pense à..."), utilise TOUJOURS le champ title racine et laisse tasks = null.
 - MULTIPLE TÂCHES : uniquement si l'utilisateur mentionne 2 tâches ou plus clairement distinctes (ex: "faut que je fasse X et Y", "demain j'ai X, Y et Z à faire"), utilise le tableau tasks avec chaque tâche, mets intent = "create_task" et laisse title null.
@@ -55,7 +57,10 @@ Exemple complétion avec verbe de la tâche ("j'ai éteint la clim") :
 {"intent":"complete_task","title":null,"description":null,"date":null,"time":null,"period":null,"priority":null,"taskReference":"la clim","timezone":null,"tasks":null}
 
 Exemple déplacement ("déplace l'appel médecin à demain 16h") :
-{"intent":"update_task","title":null,"description":null,"date":"2026-06-28","time":"16:00","period":null,"priority":null,"taskReference":"appel médecin","timezone":null,"tasks":null}`;
+{"intent":"update_task","title":null,"description":null,"date":"2026-06-28","time":"16:00","period":null,"priority":null,"taskReference":"appel médecin","timezone":null,"tasks":null}
+
+Exemple changement de langue ("parle-moi en anglais" / "switch to English") :
+{"intent":"set_language","title":null,"description":null,"date":null,"time":null,"period":null,"priority":null,"taskReference":null,"timezone":null,"language":"en","tasks":null}`;
 }
 
 export function buildRetryPrompt(error: string): string {

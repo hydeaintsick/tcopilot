@@ -60,7 +60,8 @@ function isPublicEntry(ctx: BotContextType): boolean {
   if (ctx.preCheckoutQuery) return true;
   if (ctx.message?.successful_payment) return true;
   // Le choix de langue reste accessible sans abonnement (y compris via boutons).
-  if (ctx.callbackQuery?.data?.startsWith("lang:")) return true;
+  const cbData = ctx.callbackQuery?.data;
+  if (cbData?.startsWith("lang:") || cbData === "open_lang") return true;
   const cmd = commandName(ctx);
   return cmd !== null && PUBLIC_COMMANDS.has(cmd);
 }
@@ -190,8 +191,11 @@ export function createBot(services: AppServices): Bot<BotContextType> {
   });
 
   bot.command("start", async (ctx) => {
+    const d = getBotDict(langOf(ctx));
+    // Clavier d'accueil : navigation + un bouton dédié pour changer de langue.
+    const keyboard = buildNavKeyboard(d).row().text(`🌍 ${d.commands.language}`, "open_lang");
     await ctx.reply(services.responseService.formatWelcome(langOf(ctx)), {
-      reply_markup: buildNavKeyboard(getBotDict(langOf(ctx))),
+      reply_markup: keyboard,
     });
   });
 
@@ -207,6 +211,14 @@ export function createBot(services: AppServices): Bot<BotContextType> {
 
   // Sélection de langue : ouvre un clavier avec les langues proposées.
   bot.command("language", async (ctx) => {
+    await ctx.reply(getBotDict(langOf(ctx)).languagePrompt, {
+      reply_markup: buildLanguageKeyboard(),
+    });
+  });
+
+  // Bouton « 🌍 Langue » (sous l'accueil) : ouvre le sélecteur de langue.
+  bot.callbackQuery("open_lang", async (ctx) => {
+    await ctx.answerCallbackQuery().catch(() => {});
     await ctx.reply(getBotDict(langOf(ctx)).languagePrompt, {
       reply_markup: buildLanguageKeyboard(),
     });
@@ -707,6 +719,24 @@ async function handleUserText(
     // comprises). Volontairement « best-effort » : un échec d'écriture ne doit
     // jamais empêcher la réponse à l'utilisateur.
     void logQuestion(services, ctx.appContext, text, source, intent.intent);
+
+    // Changement de langue en langage naturel ("parle-moi en anglais", ...).
+    if (intent.intent === "set_language") {
+      if (intent.language) {
+        const code = resolveLanguage(intent.language);
+        await services.userService.updateLanguage(ctx.appContext.userId, code);
+        ctx.appContext.language = code;
+        const d = getBotDict(code);
+        pushHistory(ctx.session, text, d.languageSet);
+        await ctx.reply(d.languageSet, { reply_markup: buildNavKeyboard(d) });
+      } else {
+        // Langue non reconnue/non précisée : on propose le sélecteur.
+        await ctx.reply(getBotDict(lang).languagePrompt, {
+          reply_markup: buildLanguageKeyboard(),
+        });
+      }
+      return;
+    }
 
     if (intent.timezone && intent.intent === "set_timezone") {
       const tzResult = await services.userService.updateTimezone(
