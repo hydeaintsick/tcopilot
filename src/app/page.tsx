@@ -9,6 +9,10 @@ import {
   Sparkles,
   Globe,
   CheckCircle2,
+  Link2,
+  Share2,
+  Coins,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,7 +58,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
                 <a
-                  href={siteConfig.channelUrl}
+                  href={siteConfig.telegramUrl}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -201,6 +205,71 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Affiliation */}
+      <section id="affiliation" className="border-t border-border/60 py-20">
+        <div className="container">
+          <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-accent/5 to-background px-6 py-14 sm:px-12">
+            <div
+              className="pointer-events-none absolute inset-0 -z-10 opacity-40 [mask-image:radial-gradient(60%_60%_at_70%_20%,black,transparent)]"
+              aria-hidden
+            >
+              <div className="absolute right-0 top-0 h-[360px] w-[560px] rounded-full bg-primary/30 blur-3xl" />
+            </div>
+
+            <div className="mx-auto max-w-2xl text-center">
+              <Badge variant="accent" className="mb-4">
+                <Clock className="mr-1 h-3 w-3" />{" "}
+                {t.affiliation.badge}
+              </Badge>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                {t.affiliation.title}
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                {t.affiliation.subtitle}
+              </p>
+            </div>
+
+            <div className="mx-auto mt-12 grid max-w-3xl gap-8 md:grid-cols-3">
+              {t.affiliation.steps.map((step, i) => {
+                const AffIcons = [Link2, Share2, Coins];
+                const Icon = AffIcons[i] ?? Sparkles;
+                return (
+                  <div
+                    key={step.title}
+                    className="flex flex-col items-center text-center"
+                  >
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <h3 className="mt-4 text-base font-semibold">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {step.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-10 flex flex-col items-center gap-3">
+              <Button asChild size="lg">
+                <a
+                  href={siteConfig.telegramUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Send className="h-4 w-4" /> {t.affiliation.cta}
+                </a>
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                {t.affiliation.deadline}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="border-t border-border/60 py-20">
         <div className="container">
@@ -212,7 +281,7 @@ export default function HomePage() {
               <p className="max-w-xl text-muted-foreground">{t.cta.subtitle}</p>
               <Button asChild size="lg">
                 <a
-                  href={siteConfig.channelUrl}
+                  href={siteConfig.telegramUrl}
                   target="_blank"
                   rel="noreferrer"
                 >

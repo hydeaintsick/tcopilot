@@ -39,6 +39,14 @@ export interface Dictionary {
   steps: { title: string; subtitle: string; items: TitledItem[] };
   features: { title: string; subtitle: string; items: TitledItem[] };
   examples: { title: string; subtitle: string; items: string[] };
+  affiliation: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    deadline: string;
+    steps: TitledItem[];
+    cta: string;
+  };
   cta: { title: string; subtitle: string; button: string };
   footer: { tagline: string; features: string };
 }
@@ -143,6 +151,31 @@ export const translations: Record<Language, Dictionary> = {
         "I finished my workout",
         "Delete tomorrow's meeting",
       ],
+    },
+    affiliation: {
+      badge: "Limited offer — until September",
+      title: "Invite friends, earn 50%",
+      subtitle:
+        "For every friend you refer who subscribes to TCopilot, you earn 50% of their monthly revenue — directly and automatically, until September.",
+      deadline: "Offer valid until September 2025",
+      steps: [
+        {
+          title: "Get your link",
+          description:
+            "Send /affiliate to the bot. It instantly generates your unique referral link.",
+        },
+        {
+          title: "Share it",
+          description:
+            "Share your link with your friends, community, or social media. No limit on referrals.",
+        },
+        {
+          title: "Earn 50%",
+          description:
+            "For each subscription taken via your link, you receive 50% of the revenue every month.",
+        },
+      ],
+      cta: "Get my referral link",
     },
     cta: {
       title: "Ready to delegate your organization?",
@@ -268,6 +301,31 @@ export const translations: Record<Language, Dictionary> = {
         "Supprime la réunion de demain",
       ],
     },
+    affiliation: {
+      badge: "Offre limitée — jusqu'en septembre",
+      title: "Invite tes amis, gagne 50%",
+      subtitle:
+        "Pour chaque ami que tu parraines et qui s'abonne à TCopilot, tu gagnes 50% de ses revenus mensuels — directement et automatiquement, jusqu'en septembre.",
+      deadline: "Offre valable jusqu'en septembre 2025",
+      steps: [
+        {
+          title: "Obtiens ton lien",
+          description:
+            "Envoie /affiliate au bot. Il génère instantanément ton lien de parrainage unique.",
+        },
+        {
+          title: "Partage-le",
+          description:
+            "Partage ton lien avec tes amis, ta communauté ou tes réseaux sociaux. Pas de limite de parrainages.",
+        },
+        {
+          title: "Gagne 50%",
+          description:
+            "Pour chaque abonnement pris via ton lien, tu reçois 50% des revenus chaque mois.",
+        },
+      ],
+      cta: "Obtenir mon lien de parrainage",
+    },
     cta: {
       title: "Prêt à déléguer ton organisation ?",
       subtitle:
@@ -386,6 +444,31 @@ export const translations: Record<Language, Dictionary> = {
         "Я закончил тренировку",
         "Удали завтрашнюю встречу",
       ],
+    },
+    affiliation: {
+      badge: "Ограниченное предложение — до сентября",
+      title: "Приглашай друзей, зарабатывай 50%",
+      subtitle:
+        "За каждого друга, которого ты пригласишь и кто оформит подписку на TCopilot, ты получаешь 50% его ежемесячного дохода — напрямую и автоматически, до сентября.",
+      deadline: "Предложение действительно до сентября 2025",
+      steps: [
+        {
+          title: "Получи ссылку",
+          description:
+            "Отправь /affiliate боту. Он мгновенно сгенерирует твою уникальную реферальную ссылку.",
+        },
+        {
+          title: "Поделись ею",
+          description:
+            "Поделись ссылкой с друзьями, сообществом или в социальных сетях. Количество рефералов не ограничено.",
+        },
+        {
+          title: "Зарабатывай 50%",
+          description:
+            "За каждую подписку, оформленную по твоей ссылке, ты получаешь 50% дохода каждый месяц.",
+        },
+      ],
+      cta: "Получить реферальную ссылку",
     },
     cta: {
       title: "Готов делегировать свою организацию?",
@@ -506,6 +589,31 @@ export const translations: Record<Language, Dictionary> = {
         "Dokončil jsem trénink",
         "Smaž zítřejší schůzku",
       ],
+    },
+    affiliation: {
+      badge: "Omezená nabídka — do září",
+      title: "Pozvi přátele, vydělej 50 %",
+      subtitle:
+        "Za každého přítele, kterého doporučíš a který si předplatí TCopilot, získáš 50 % jeho měsíčních příjmů — přímo a automaticky, do září.",
+      deadline: "Nabídka platí do září 2025",
+      steps: [
+        {
+          title: "Získej odkaz",
+          description:
+            "Pošli /affiliate botovi. Okamžitě vygeneruje tvůj unikátní referenční odkaz.",
+        },
+        {
+          title: "Sdílej ho",
+          description:
+            "Sdílej odkaz s přáteli, komunitou nebo na sociálních sítích. Počet doporučení je neomezený.",
+        },
+        {
+          title: "Vydělej 50 %",
+          description:
+            "Za každé předplatné přes tvůj odkaz obdržíš 50 % příjmů každý měsíc.",
+        },
+      ],
+      cta: "Získat referenční odkaz",
     },
     cta: {
       title: "Připraven delegovat svou organizaci?",
@@ -630,6 +738,31 @@ export const translations: Record<Language, Dictionary> = {
         "Elimina la reunión de mañana",
       ],
     },
+    affiliation: {
+      badge: "Oferta limitada — hasta septiembre",
+      title: "Invita amigos, gana el 50%",
+      subtitle:
+        "Por cada amigo que refieras y se suscriba a TCopilot, ganas el 50% de sus ingresos mensuales — directamente y automáticamente, hasta septiembre.",
+      deadline: "Oferta válida hasta septiembre de 2025",
+      steps: [
+        {
+          title: "Obtén tu enlace",
+          description:
+            "Envía /affiliate al bot. Generará al instante tu enlace de referido único.",
+        },
+        {
+          title: "Compártelo",
+          description:
+            "Comparte tu enlace con amigos, tu comunidad o redes sociales. Sin límite de referidos.",
+        },
+        {
+          title: "Gana el 50%",
+          description:
+            "Por cada suscripción hecha a través de tu enlace, recibes el 50% de los ingresos cada mes.",
+        },
+      ],
+      cta: "Obtener mi enlace de referido",
+    },
     cta: {
       title: "¿Listo para delegar tu organización?",
       subtitle:
@@ -749,6 +882,31 @@ export const translations: Record<Language, Dictionary> = {
         "Ho finito il mio allenamento",
         "Elimina la riunione di domani",
       ],
+    },
+    affiliation: {
+      badge: "Offerta limitata — fino a settembre",
+      title: "Invita amici, guadagna il 50%",
+      subtitle:
+        "Per ogni amico che referisci e che si iscrive a TCopilot, guadagni il 50% dei suoi ricavi mensili — direttamente e automaticamente, fino a settembre.",
+      deadline: "Offerta valida fino a settembre 2025",
+      steps: [
+        {
+          title: "Ottieni il tuo link",
+          description:
+            "Invia /affiliate al bot. Genererà istantaneamente il tuo link di referral unico.",
+        },
+        {
+          title: "Condividilo",
+          description:
+            "Condividi il tuo link con amici, la tua community o sui social. Nessun limite di referral.",
+        },
+        {
+          title: "Guadagna il 50%",
+          description:
+            "Per ogni abbonamento tramite il tuo link, ricevi il 50% dei ricavi ogni mese.",
+        },
+      ],
+      cta: "Ottenere il mio link di referral",
     },
     cta: {
       title: "Pronto a delegare la tua organizzazione?",
