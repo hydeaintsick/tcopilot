@@ -5,6 +5,8 @@ export const LANGUAGES = [
   { code: "cs", label: "CZ" },
   { code: "es", label: "ES" },
   { code: "it", label: "IT" },
+  { code: "zh", label: "中文" },
+  { code: "tr", label: "TR" },
 ] as const;
 
 export type Language = (typeof LANGUAGES)[number]["code"];
@@ -21,9 +23,20 @@ export interface TitledItem {
   description: string;
 }
 
+export interface CommandItem {
+  command: string;
+  description: string;
+}
+
 export interface Dictionary {
   htmlLang: string;
-  nav: { how: string; features: string; examples: string };
+  nav: {
+    how: string;
+    features: string;
+    examples: string;
+    commands: string;
+    contact: string;
+  };
   openTelegram: string;
   hero: {
     badge: string;
@@ -38,7 +51,14 @@ export interface Dictionary {
   chat: ChatMessage[];
   steps: { title: string; subtitle: string; items: TitledItem[] };
   features: { title: string; subtitle: string; items: TitledItem[] };
+  commands: {
+    title: string;
+    subtitle: string;
+    items: CommandItem[];
+    note: string;
+  };
   examples: { title: string; subtitle: string; items: string[] };
+  privacy: { title: string; subtitle: string; items: TitledItem[] };
   affiliation: {
     badge: string;
     title: string;
@@ -48,23 +68,42 @@ export interface Dictionary {
     cta: string;
   };
   cta: { title: string; subtitle: string; button: string };
-  footer: { tagline: string; features: string };
+  contact: {
+    title: string;
+    subtitle: string;
+    description: string;
+    emailLabel: string;
+    cta: string;
+    responseNote: string;
+    back: string;
+  };
+  footer: { tagline: string; features: string; contact: string };
 }
 
 export const translations: Record<Language, Dictionary> = {
   en: {
     htmlLang: "en",
-    nav: { how: "How it works", features: "Features", examples: "Examples" },
+    nav: {
+      how: "How it works",
+      features: "Features",
+      examples: "Examples",
+      commands: "Commands",
+      contact: "Contact",
+    },
     openTelegram: "Open in Telegram",
     hero: {
       badge: "Powered by AI",
       titleLead: "Your personal copilot,",
       titleHighlight: "on Telegram",
       subtitle:
-        "Telegram Copilot turns your messages into tasks, reminders and appointments. Write in French, like talking to an assistant: it handles the rest.",
+        "Telegram Copilot is like a calendar — but magic, and it talks to you. That's all it does: write your tasks, reminders and appointments in plain words, and get a nudge 30 minutes before. Nothing else.",
       ctaPrimary: "Start on Telegram",
       ctaSecondary: "See how it works",
-      bullets: ["100% in French", "Smart reminders", "No app to install"],
+      bullets: [
+        "A magic talking agenda",
+        "Reminder 30 min before",
+        "Private & anonymous",
+      ],
       online: "online",
     },
     chat: [
@@ -111,7 +150,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Natural language",
           description:
-            "Talk to it normally in French: « Remind me to call the doctor Tuesday at 3pm ». It understands and organizes.",
+            "Talk to it normally, in your own language: « Remind me to call the doctor Tuesday at 3pm ». It understands and organizes.",
         },
         {
           title: "Automatic reminders",
@@ -140,6 +179,20 @@ export const translations: Record<Language, Dictionary> = {
         },
       ],
     },
+    commands: {
+      title: "For geeks: direct commands",
+      subtitle:
+        "Prefer shortcuts? Beyond natural language, the bot also understands direct commands.",
+      items: [
+        { command: "/today", description: "See everything planned for today." },
+        { command: "/tomorrow", description: "See what's coming tomorrow." },
+        { command: "/week", description: "Your agenda for the week." },
+        { command: "/tasks", description: "List all your open tasks." },
+        { command: "/done", description: "Mark a task as completed." },
+        { command: "/delete", description: "Delete a task." },
+      ],
+      note: "And to create something? Just write it naturally — no command needed.",
+    },
     examples: {
       title: "Just tell it things",
       subtitle: "Here are examples of messages Telegram Copilot understands perfectly.",
@@ -150,6 +203,33 @@ export const translations: Record<Language, Dictionary> = {
         "What do I have today?",
         "I finished my workout",
         "Delete tomorrow's meeting",
+      ],
+    },
+    privacy: {
+      title: "Anonymous & private by design",
+      subtitle:
+        "Your life is yours. Telegram Copilot is built to stay discreet.",
+      items: [
+        {
+          title: "No phone number, no email",
+          description:
+            "You start straight from Telegram. We never ask for a personal identity to use the bot.",
+        },
+        {
+          title: "Only your tasks",
+          description:
+            "We store only what's needed to run your reminders — nothing more, no tracking of your habits.",
+        },
+        {
+          title: "Never resold",
+          description:
+            "Your data is never sold or shared with advertisers. Ever.",
+        },
+        {
+          title: "Yours to erase",
+          description:
+            "Just ask and your data is wiped. You stay in control at all times.",
+        },
       ],
     },
     affiliation: {
@@ -183,9 +263,20 @@ export const translations: Record<Language, Dictionary> = {
         "Open Telegram Copilot on Telegram and send your first message. It's free and instant.",
       button: "Open in Telegram",
     },
+    contact: {
+      title: "Contact & support",
+      subtitle: "A question, a bug, an idea? We're here.",
+      description:
+        "The fastest way to reach us is by email. Tell us what's going on and we'll get back to you.",
+      emailLabel: "Email us",
+      cta: "Send an email",
+      responseNote: "We typically respond within 24–48 hours.",
+      back: "Back to home",
+    },
     footer: {
       tagline: "Your personal copilot on Telegram.",
       features: "Features",
+      contact: "Contact",
     },
   },
 
@@ -195,6 +286,8 @@ export const translations: Record<Language, Dictionary> = {
       how: "Fonctionnement",
       features: "Fonctionnalités",
       examples: "Exemples",
+      commands: "Commandes",
+      contact: "Contact",
     },
     openTelegram: "Ouvrir dans Telegram",
     hero: {
@@ -202,13 +295,13 @@ export const translations: Record<Language, Dictionary> = {
       titleLead: "Ton copilote personnel,",
       titleHighlight: "sur Telegram",
       subtitle:
-        "Telegram Copilot transforme tes messages en tâches, rappels et rendez-vous. Écris en français, comme à un assistant : il s'occupe du reste.",
+        "Telegram Copilot, c'est comme un agenda — mais magique, et qui te parle. Il ne sert qu'à ça : écris tes tâches, rappels et rendez-vous en langage naturel, et reçois un rappel 30 minutes avant. Rien d'autre.",
       ctaPrimary: "Démarrer sur Telegram",
       ctaSecondary: "Voir comment ça marche",
       bullets: [
-        "100% en français",
-        "Rappels intelligents",
-        "Aucune app à installer",
+        "Un agenda magique qui parle",
+        "Rappel 30 min avant",
+        "Privé & anonyme",
       ],
       online: "en ligne",
     },
@@ -259,7 +352,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Langage naturel",
           description:
-            "Parle-lui normalement en français : « Rappelle-moi d'appeler le médecin mardi à 15h ». Il comprend et organise.",
+            "Parle-lui normalement, dans ta langue : « Rappelle-moi d'appeler le médecin mardi à 15h ». Il comprend et organise.",
         },
         {
           title: "Rappels automatiques",
@@ -288,6 +381,20 @@ export const translations: Record<Language, Dictionary> = {
         },
       ],
     },
+    commands: {
+      title: "Pour les geeks : les commandes",
+      subtitle:
+        "Tu préfères les raccourcis ? En plus du langage naturel, le bot comprend aussi des commandes directes.",
+      items: [
+        { command: "/today", description: "Voir tout ce qui est prévu aujourd'hui." },
+        { command: "/tomorrow", description: "Voir ce qui arrive demain." },
+        { command: "/week", description: "Ton agenda de la semaine." },
+        { command: "/tasks", description: "Lister toutes tes tâches en cours." },
+        { command: "/done", description: "Marquer une tâche comme terminée." },
+        { command: "/delete", description: "Supprimer une tâche." },
+      ],
+      note: "Et pour créer ? Écris-le simplement, aucune commande nécessaire.",
+    },
     examples: {
       title: "Dis-lui simplement les choses",
       subtitle:
@@ -299,6 +406,33 @@ export const translations: Record<Language, Dictionary> = {
         "Qu'est-ce que j'ai aujourd'hui ?",
         "J'ai terminé ma séance",
         "Supprime la réunion de demain",
+      ],
+    },
+    privacy: {
+      title: "Anonyme & respectueux de ta vie privée",
+      subtitle:
+        "Ta vie t'appartient. Telegram Copilot est conçu pour rester discret.",
+      items: [
+        {
+          title: "Ni numéro, ni e-mail",
+          description:
+            "Tu démarres directement depuis Telegram. On ne te demande aucune identité personnelle pour utiliser le bot.",
+        },
+        {
+          title: "Juste tes tâches",
+          description:
+            "On ne stocke que le nécessaire pour tes rappels — rien de plus, aucun suivi de tes habitudes.",
+        },
+        {
+          title: "Jamais revendu",
+          description:
+            "Tes données ne sont jamais vendues ni partagées avec des annonceurs. Jamais.",
+        },
+        {
+          title: "Effaçable à volonté",
+          description:
+            "Sur simple demande, tes données sont supprimées. Tu gardes le contrôle à tout moment.",
+        },
       ],
     },
     affiliation: {
@@ -332,28 +466,45 @@ export const translations: Record<Language, Dictionary> = {
         "Ouvre Telegram Copilot sur Telegram et envoie ton premier message. C'est gratuit et immédiat.",
       button: "Ouvrir dans Telegram",
     },
+    contact: {
+      title: "Contact & support",
+      subtitle: "Une question, un bug, une idée ? On est là.",
+      description:
+        "Le plus rapide pour nous joindre, c'est par e-mail. Explique-nous ta situation et on te répond.",
+      emailLabel: "Écris-nous",
+      cta: "Envoyer un e-mail",
+      responseNote: "On répond généralement sous 24 à 48 heures.",
+      back: "Retour à l'accueil",
+    },
     footer: {
       tagline: "Ton copilote personnel sur Telegram.",
       features: "Fonctionnalités",
+      contact: "Contact",
     },
   },
 
   ru: {
     htmlLang: "ru",
-    nav: { how: "Как это работает", features: "Возможности", examples: "Примеры" },
+    nav: {
+      how: "Как это работает",
+      features: "Возможности",
+      examples: "Примеры",
+      commands: "Команды",
+      contact: "Контакты",
+    },
     openTelegram: "Открыть в Telegram",
     hero: {
       badge: "На базе ИИ",
       titleLead: "Твой личный помощник,",
       titleHighlight: "в Telegram",
       subtitle:
-        "Telegram Copilot превращает твои сообщения в задачи, напоминания и встречи. Пиши на французском, как ассистенту: остальное он сделает сам.",
+        "Telegram Copilot — как ежедневник, только волшебный и говорящий. Он нужен только для этого: пиши задачи, напоминания и встречи обычными словами и получай напоминание за 30 минут. Ничего лишнего.",
       ctaPrimary: "Начать в Telegram",
       ctaSecondary: "Узнать, как это работает",
       bullets: [
-        "100% на французском",
-        "Умные напоминания",
-        "Не нужно ставить приложение",
+        "Волшебный говорящий ежедневник",
+        "Напоминание за 30 мин",
+        "Приватно и анонимно",
       ],
       online: "в сети",
     },
@@ -403,7 +554,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Естественный язык",
           description:
-            "Говори с ним как обычно на французском: « Напомни позвонить врачу во вторник в 15:00 ». Он понимает и организует.",
+            "Говори с ним как обычно, на своём языке: « Напомни позвонить врачу во вторник в 15:00 ». Он понимает и организует.",
         },
         {
           title: "Автоматические напоминания",
@@ -432,6 +583,20 @@ export const translations: Record<Language, Dictionary> = {
         },
       ],
     },
+    commands: {
+      title: "Для гиков: прямые команды",
+      subtitle:
+        "Предпочитаешь горячие клавиши? Кроме обычного языка, бот понимает и прямые команды.",
+      items: [
+        { command: "/today", description: "Показать всё, что запланировано на сегодня." },
+        { command: "/tomorrow", description: "Показать, что будет завтра." },
+        { command: "/week", description: "Твой план на неделю." },
+        { command: "/tasks", description: "Список всех открытых задач." },
+        { command: "/done", description: "Отметить задачу выполненной." },
+        { command: "/delete", description: "Удалить задачу." },
+      ],
+      note: "А как создать? Просто напиши обычными словами — команда не нужна.",
+    },
     examples: {
       title: "Просто скажи ему",
       subtitle:
@@ -443,6 +608,33 @@ export const translations: Record<Language, Dictionary> = {
         "Что у меня сегодня?",
         "Я закончил тренировку",
         "Удали завтрашнюю встречу",
+      ],
+    },
+    privacy: {
+      title: "Анонимность и приватность по умолчанию",
+      subtitle:
+        "Твоя жизнь принадлежит тебе. Telegram Copilot создан, чтобы оставаться незаметным.",
+      items: [
+        {
+          title: "Ни номера, ни e-mail",
+          description:
+            "Ты начинаешь прямо из Telegram. Мы никогда не спрашиваем личные данные для работы с ботом.",
+        },
+        {
+          title: "Только твои задачи",
+          description:
+            "Мы храним лишь необходимое для напоминаний — ничего больше, без слежки за привычками.",
+        },
+        {
+          title: "Никогда не продаём",
+          description:
+            "Твои данные никогда не продаются и не передаются рекламодателям. Никогда.",
+        },
+        {
+          title: "Удаляется по запросу",
+          description:
+            "Достаточно попросить — и твои данные стираются. Контроль всегда у тебя.",
+        },
       ],
     },
     affiliation: {
@@ -476,28 +668,45 @@ export const translations: Record<Language, Dictionary> = {
         "Открой Telegram Copilot в Telegram и отправь первое сообщение. Это бесплатно и мгновенно.",
       button: "Открыть в Telegram",
     },
+    contact: {
+      title: "Контакты и поддержка",
+      subtitle: "Вопрос, баг или идея? Мы на связи.",
+      description:
+        "Быстрее всего написать нам на e-mail. Опиши ситуацию — и мы ответим.",
+      emailLabel: "Написать нам",
+      cta: "Отправить e-mail",
+      responseNote: "Обычно отвечаем в течение 24–48 часов.",
+      back: "На главную",
+    },
     footer: {
       tagline: "Твой личный помощник в Telegram.",
       features: "Возможности",
+      contact: "Контакты",
     },
   },
 
   cs: {
     htmlLang: "cs",
-    nav: { how: "Jak to funguje", features: "Funkce", examples: "Příklady" },
+    nav: {
+      how: "Jak to funguje",
+      features: "Funkce",
+      examples: "Příklady",
+      commands: "Příkazy",
+      contact: "Kontakt",
+    },
     openTelegram: "Otevřít v Telegramu",
     hero: {
       badge: "Poháněno AI",
       titleLead: "Tvůj osobní kopilot,",
       titleHighlight: "na Telegramu",
       subtitle:
-        "Telegram Copilot promění tvé zprávy v úkoly, připomínky a schůzky. Piš francouzsky, jako asistentovi: o zbytek se postará.",
+        "Telegram Copilot je jako diář — ale kouzelný a mluví. Slouží jen k tomu: napiš své úkoly, připomínky a schůzky běžnými slovy a dostaneš připomenutí 30 minut předem. Nic víc.",
       ctaPrimary: "Začít na Telegramu",
       ctaSecondary: "Podívat se, jak to funguje",
       bullets: [
-        "100% ve francouzštině",
-        "Chytré připomínky",
-        "Žádná aplikace k instalaci",
+        "Kouzelný mluvící diář",
+        "Připomenutí 30 min předem",
+        "Soukromé a anonymní",
       ],
       online: "online",
     },
@@ -548,7 +757,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Přirozený jazyk",
           description:
-            "Mluv s ním normálně francouzsky: « Připomeň mi zavolat lékaři v úterý v 15:00 ». Rozumí a zorganizuje.",
+            "Mluv s ním normálně, svým jazykem: « Připomeň mi zavolat lékaři v úterý v 15:00 ». Rozumí a zorganizuje.",
         },
         {
           title: "Automatické připomínky",
@@ -577,6 +786,20 @@ export const translations: Record<Language, Dictionary> = {
         },
       ],
     },
+    commands: {
+      title: "Pro geeky: přímé příkazy",
+      subtitle:
+        "Máš radši zkratky? Kromě přirozeného jazyka bot rozumí i přímým příkazům.",
+      items: [
+        { command: "/today", description: "Zobraz vše, co máš dnes v plánu." },
+        { command: "/tomorrow", description: "Zobraz, co tě čeká zítra." },
+        { command: "/week", description: "Tvůj program na týden." },
+        { command: "/tasks", description: "Vypiš všechny otevřené úkoly." },
+        { command: "/done", description: "Označ úkol jako hotový." },
+        { command: "/delete", description: "Smaž úkol." },
+      ],
+      note: "A jak něco vytvořit? Stačí to napsat běžně — žádný příkaz není potřeba.",
+    },
     examples: {
       title: "Stačí mu to říct",
       subtitle:
@@ -588,6 +811,33 @@ export const translations: Record<Language, Dictionary> = {
         "Co mám dnes?",
         "Dokončil jsem trénink",
         "Smaž zítřejší schůzku",
+      ],
+    },
+    privacy: {
+      title: "Anonymní a soukromé už z principu",
+      subtitle:
+        "Tvůj život patří tobě. Telegram Copilot je navržen tak, aby zůstal diskrétní.",
+      items: [
+        {
+          title: "Žádné číslo, žádný e-mail",
+          description:
+            "Začínáš přímo z Telegramu. Nikdy nechceme osobní identitu k používání bota.",
+        },
+        {
+          title: "Jen tvé úkoly",
+          description:
+            "Ukládáme jen to nutné pro tvé připomínky — nic víc, žádné sledování zvyků.",
+        },
+        {
+          title: "Nikdy neprodáváme",
+          description:
+            "Tvá data se nikdy neprodávají ani nesdílejí s inzerenty. Nikdy.",
+        },
+        {
+          title: "Smazatelné na požádání",
+          description:
+            "Stačí požádat a tvá data se vymažou. Kontrolu máš vždy ty.",
+        },
       ],
     },
     affiliation: {
@@ -621,28 +871,45 @@ export const translations: Record<Language, Dictionary> = {
         "Otevři Telegram Copilot na Telegramu a pošli svou první zprávu. Je to zdarma a okamžité.",
       button: "Otevřít v Telegramu",
     },
+    contact: {
+      title: "Kontakt a podpora",
+      subtitle: "Dotaz, chyba nebo nápad? Jsme tu.",
+      description:
+        "Nejrychleji nás zastihneš e-mailem. Popiš situaci a ozveme se ti.",
+      emailLabel: "Napiš nám",
+      cta: "Odeslat e-mail",
+      responseNote: "Obvykle odpovídáme do 24–48 hodin.",
+      back: "Zpět na úvod",
+    },
     footer: {
       tagline: "Tvůj osobní kopilot na Telegramu.",
       features: "Funkce",
+      contact: "Kontakt",
     },
   },
 
   es: {
     htmlLang: "es",
-    nav: { how: "Cómo funciona", features: "Funciones", examples: "Ejemplos" },
+    nav: {
+      how: "Cómo funciona",
+      features: "Funciones",
+      examples: "Ejemplos",
+      commands: "Comandos",
+      contact: "Contacto",
+    },
     openTelegram: "Abrir en Telegram",
     hero: {
       badge: "Impulsado por IA",
       titleLead: "Tu copiloto personal,",
       titleHighlight: "en Telegram",
       subtitle:
-        "Telegram Copilot convierte tus mensajes en tareas, recordatorios y citas. Escribe en francés, como a un asistente: él se encarga del resto.",
+        "Telegram Copilot es como una agenda — pero mágica, y que te habla. Solo sirve para eso: escribe tus tareas, recordatorios y citas con palabras normales y recibe un aviso 30 minutos antes. Nada más.",
       ctaPrimary: "Empezar en Telegram",
       ctaSecondary: "Ver cómo funciona",
       bullets: [
-        "100% en francés",
-        "Recordatorios inteligentes",
-        "Sin app que instalar",
+        "Una agenda mágica que habla",
+        "Aviso 30 min antes",
+        "Privado y anónimo",
       ],
       online: "en línea",
     },
@@ -696,7 +963,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Lenguaje natural",
           description:
-            "Háblale con normalidad en francés: « Recuérdame llamar al médico el martes a las 15h ». Lo entiende y lo organiza.",
+            "Háblale con normalidad, en tu idioma: « Recuérdame llamar al médico el martes a las 15h ». Lo entiende y lo organiza.",
         },
         {
           title: "Recordatorios automáticos",
@@ -725,6 +992,20 @@ export const translations: Record<Language, Dictionary> = {
         },
       ],
     },
+    commands: {
+      title: "Para geeks: comandos directos",
+      subtitle:
+        "¿Prefieres los atajos? Además del lenguaje natural, el bot también entiende comandos directos.",
+      items: [
+        { command: "/today", description: "Ver todo lo previsto para hoy." },
+        { command: "/tomorrow", description: "Ver lo que viene mañana." },
+        { command: "/week", description: "Tu agenda de la semana." },
+        { command: "/tasks", description: "Listar todas tus tareas abiertas." },
+        { command: "/done", description: "Marcar una tarea como completada." },
+        { command: "/delete", description: "Eliminar una tarea." },
+      ],
+      note: "¿Y para crear? Solo escríbelo con normalidad — no hace falta comando.",
+    },
     examples: {
       title: "Solo díselo",
       subtitle:
@@ -736,6 +1017,33 @@ export const translations: Record<Language, Dictionary> = {
         "¿Qué tengo hoy?",
         "He terminado mi entrenamiento",
         "Elimina la reunión de mañana",
+      ],
+    },
+    privacy: {
+      title: "Anónimo y privado por diseño",
+      subtitle:
+        "Tu vida es tuya. Telegram Copilot está pensado para ser discreto.",
+      items: [
+        {
+          title: "Ni teléfono, ni e-mail",
+          description:
+            "Empiezas directamente desde Telegram. Nunca pedimos una identidad personal para usar el bot.",
+        },
+        {
+          title: "Solo tus tareas",
+          description:
+            "Solo guardamos lo necesario para tus recordatorios — nada más, sin rastrear tus hábitos.",
+        },
+        {
+          title: "Nunca revendido",
+          description:
+            "Tus datos nunca se venden ni se comparten con anunciantes. Nunca.",
+        },
+        {
+          title: "Borrable cuando quieras",
+          description:
+            "Pídelo y tus datos se eliminan. Mantienes el control en todo momento.",
+        },
       ],
     },
     affiliation: {
@@ -769,28 +1077,45 @@ export const translations: Record<Language, Dictionary> = {
         "Abre Telegram Copilot en Telegram y envía tu primer mensaje. Es gratis e inmediato.",
       button: "Abrir en Telegram",
     },
+    contact: {
+      title: "Contacto y soporte",
+      subtitle: "¿Una pregunta, un fallo, una idea? Estamos aquí.",
+      description:
+        "La forma más rápida de contactarnos es por correo. Cuéntanos qué pasa y te responderemos.",
+      emailLabel: "Escríbenos",
+      cta: "Enviar un correo",
+      responseNote: "Solemos responder en 24–48 horas.",
+      back: "Volver al inicio",
+    },
     footer: {
       tagline: "Tu copiloto personal en Telegram.",
       features: "Funciones",
+      contact: "Contacto",
     },
   },
 
   it: {
     htmlLang: "it",
-    nav: { how: "Come funziona", features: "Funzionalità", examples: "Esempi" },
+    nav: {
+      how: "Come funziona",
+      features: "Funzionalità",
+      examples: "Esempi",
+      commands: "Comandi",
+      contact: "Contatto",
+    },
     openTelegram: "Apri in Telegram",
     hero: {
       badge: "Basato sull'IA",
       titleLead: "Il tuo copilota personale,",
       titleHighlight: "su Telegram",
       subtitle:
-        "Telegram Copilot trasforma i tuoi messaggi in attività, promemoria e appuntamenti. Scrivi in francese, come a un assistente: pensa lui al resto.",
+        "Telegram Copilot è come un'agenda — ma magica, e che ti parla. Serve solo a questo: scrivi attività, promemoria e appuntamenti con parole normali e ricevi un avviso 30 minuti prima. Nient'altro.",
       ctaPrimary: "Inizia su Telegram",
       ctaSecondary: "Scopri come funziona",
       bullets: [
-        "100% in francese",
-        "Promemoria intelligenti",
-        "Nessuna app da installare",
+        "Un'agenda magica che parla",
+        "Avviso 30 min prima",
+        "Privato e anonimo",
       ],
       online: "online",
     },
@@ -841,7 +1166,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Linguaggio naturale",
           description:
-            "Parlagli normalmente in francese: « Ricordami di chiamare il medico martedì alle 15 ». Capisce e organizza.",
+            "Parlagli normalmente, nella tua lingua: « Ricordami di chiamare il medico martedì alle 15 ». Capisce e organizza.",
         },
         {
           title: "Promemoria automatici",
@@ -870,6 +1195,20 @@ export const translations: Record<Language, Dictionary> = {
         },
       ],
     },
+    commands: {
+      title: "Per i geek: comandi diretti",
+      subtitle:
+        "Preferisci le scorciatoie? Oltre al linguaggio naturale, il bot capisce anche comandi diretti.",
+      items: [
+        { command: "/today", description: "Vedi tutto ciò che è previsto oggi." },
+        { command: "/tomorrow", description: "Vedi cosa arriva domani." },
+        { command: "/week", description: "La tua agenda della settimana." },
+        { command: "/tasks", description: "Elenca tutte le attività aperte." },
+        { command: "/done", description: "Segna un'attività come completata." },
+        { command: "/delete", description: "Elimina un'attività." },
+      ],
+      note: "E per creare? Scrivilo normalmente — nessun comando necessario.",
+    },
     examples: {
       title: "Diglielo e basta",
       subtitle:
@@ -881,6 +1220,33 @@ export const translations: Record<Language, Dictionary> = {
         "Cosa ho oggi?",
         "Ho finito il mio allenamento",
         "Elimina la riunione di domani",
+      ],
+    },
+    privacy: {
+      title: "Anonimo e privato per progettazione",
+      subtitle:
+        "La tua vita è tua. Telegram Copilot è pensato per restare discreto.",
+      items: [
+        {
+          title: "Né numero, né e-mail",
+          description:
+            "Inizi direttamente da Telegram. Non chiediamo mai un'identità personale per usare il bot.",
+        },
+        {
+          title: "Solo le tue attività",
+          description:
+            "Salviamo solo il necessario per i tuoi promemoria — nulla di più, nessun tracciamento delle abitudini.",
+        },
+        {
+          title: "Mai rivenduto",
+          description:
+            "I tuoi dati non vengono mai venduti né condivisi con gli inserzionisti. Mai.",
+        },
+        {
+          title: "Cancellabile su richiesta",
+          description:
+            "Basta chiedere e i tuoi dati vengono cancellati. Il controllo è sempre tuo.",
+        },
       ],
     },
     affiliation: {
@@ -914,9 +1280,368 @@ export const translations: Record<Language, Dictionary> = {
         "Apri Telegram Copilot su Telegram e invia il tuo primo messaggio. È gratis e immediato.",
       button: "Apri in Telegram",
     },
+    contact: {
+      title: "Contatto e supporto",
+      subtitle: "Una domanda, un bug, un'idea? Siamo qui.",
+      description:
+        "Il modo più rapido per contattarci è via e-mail. Raccontaci cosa succede e ti rispondiamo.",
+      emailLabel: "Scrivici",
+      cta: "Invia un'e-mail",
+      responseNote: "Di solito rispondiamo entro 24–48 ore.",
+      back: "Torna alla home",
+    },
     footer: {
       tagline: "Il tuo copilota personale su Telegram.",
       features: "Funzionalità",
+      contact: "Contatto",
+    },
+  },
+
+  zh: {
+    htmlLang: "zh",
+    nav: {
+      how: "使用方法",
+      features: "功能",
+      examples: "示例",
+      commands: "命令",
+      contact: "联系我们",
+    },
+    openTelegram: "在 Telegram 中打开",
+    hero: {
+      badge: "AI 驱动",
+      titleLead: "你的个人助理，",
+      titleHighlight: "在 Telegram 上",
+      subtitle:
+        "Telegram Copilot 就像一本日历——但它是魔法的，还会说话。它只做这一件事：用普通话写下任务、提醒和约会，提前 30 分钟收到提醒。仅此而已。",
+      ctaPrimary: "在 Telegram 上开始",
+      ctaSecondary: "了解使用方法",
+      bullets: ["会说话的魔法日历", "提前 30 分钟提醒", "私密且匿名"],
+      online: "在线",
+    },
+    chat: [
+      { from: "user", text: "周二下午三点提醒我打电话给医生" },
+      {
+        from: "bot",
+        text: "好的 👍 周二 15:00 我会提醒你「打电话给医生」。",
+      },
+      { from: "user", text: "明天我需要去健身房和买菜" },
+      {
+        from: "bot",
+        text: "完成 👍 我创建了 2 个任务：\n🏋️ 健身房 — 上午\n🛒 买菜 — 上午",
+      },
+      { from: "user", text: "我关掉空调了" },
+      { from: "bot", text: "很好 👍「关掉空调」已标记为完成。" },
+    ],
+    steps: {
+      title: "使用方法",
+      subtitle: "三步完成，零摩擦。无需表单，无需 App，只需对话。",
+      items: [
+        {
+          title: "打开机器人",
+          description: "一键在 Telegram 上与 Telegram Copilot 开始对话。",
+        },
+        {
+          title: "自然地写下来",
+          description: "像对助理说话一样告诉它你需要做什么，无需学习任何语法。",
+        },
+        {
+          title: "让它来处理",
+          description: "它会规划、在正确时间提醒你，并自动保持你的列表最新。",
+        },
+      ],
+    },
+    features: {
+      title: "你所需要的一切",
+      subtitle: "真正的自然语言理解，服务于你的日常组织。",
+      items: [
+        {
+          title: "自然语言",
+          description:
+            "用你自己的语言自然地说：「周二下午三点提醒我打电话给医生」。它理解并组织。",
+        },
+        {
+          title: "自动提醒",
+          description: "在每个计划任务前 30 分钟，直接在 Telegram 中收到通知。",
+        },
+        {
+          title: "一次多个任务",
+          description: "「明天我需要去健身房和买菜」一句话就能创建所有任务。",
+        },
+        {
+          title: "移动和完成",
+          description: "「把通话移到明天下午四点」或「我关掉空调了」：它会更新并为你勾选。",
+        },
+        {
+          title: "对话记忆",
+          description: "它记住最近对话的上下文，在模糊时会请你澄清。",
+        },
+        {
+          title: "时区",
+          description: "设置你的时区，无论你在哪里，所有提醒都会在正确时间触发。",
+        },
+      ],
+    },
+    commands: {
+      title: "极客专区：直接命令",
+      subtitle: "喜欢快捷方式？除了自然语言，机器人还支持直接命令。",
+      items: [
+        { command: "/today", description: "查看今天计划的所有内容。" },
+        { command: "/tomorrow", description: "查看明天的安排。" },
+        { command: "/week", description: "本周日程。" },
+        { command: "/tasks", description: "列出所有未完成任务。" },
+        { command: "/done", description: "将任务标记为已完成。" },
+        { command: "/delete", description: "删除任务。" },
+      ],
+      note: "如何创建？直接自然地写下来——不需要任何命令。",
+    },
+    examples: {
+      title: "直接告诉它",
+      subtitle: "以下是 Telegram Copilot 能完美理解的消息示例。",
+      items: [
+        "周二下午三点提醒我打电话给医生",
+        "明天我需要去健身房和买菜",
+        "把会议改到周四早上",
+        "我今天有什么安排？",
+        "我锻炼结束了",
+        "删除明天的会议",
+      ],
+    },
+    privacy: {
+      title: "匿名且私密的设计",
+      subtitle: "你的生活属于你。Telegram Copilot 的设计就是为了保持低调。",
+      items: [
+        {
+          title: "无需手机号或邮箱",
+          description: "直接从 Telegram 开始。我们从不要求个人身份信息来使用机器人。",
+        },
+        {
+          title: "只有你的任务",
+          description: "我们只存储运行提醒所需的内容——仅此而已，不跟踪你的习惯。",
+        },
+        {
+          title: "从不转售",
+          description: "你的数据绝不会被出售或与广告商共享。永远不会。",
+        },
+        {
+          title: "可随时删除",
+          description: "只需一句话，你的数据就会被清除。你始终掌控一切。",
+        },
+      ],
+    },
+    affiliation: {
+      badge: "限时优惠——截至九月",
+      title: "邀请朋友，赚取 50%",
+      subtitle:
+        "每推荐一位朋友订阅 Telegram Copilot，你就能获得他们每月收入的 50%——直接、自动地发放，直到九月。",
+      deadline: "优惠有效期至 2026 年 9 月",
+      steps: [
+        {
+          title: "获取你的链接",
+          description: "在 Telegram 中打开机器人，进入推荐计划，复制你的专属链接。",
+        },
+        {
+          title: "分享它",
+          description: "与朋友、社群或社交媒体分享你的链接，推荐数量不限。",
+        },
+        {
+          title: "赚取 50%",
+          description: "通过你的链接产生的每份订阅，你每月都能获得 50% 的收入。",
+        },
+      ],
+      cta: "获取我的推荐链接",
+    },
+    cta: {
+      title: "准备好将日程管理委托出去了吗？",
+      subtitle: "在 Telegram 上打开 Telegram Copilot 并发送第一条消息。免费且即时。",
+      button: "在 Telegram 中打开",
+    },
+    contact: {
+      title: "联系与支持",
+      subtitle: "有问题、发现 Bug 或有想法？我们在这里。",
+      description: "联系我们最快的方式是发送邮件。告诉我们发生了什么，我们会回复你。",
+      emailLabel: "给我们发邮件",
+      cta: "发送邮件",
+      responseNote: "我们通常在 24–48 小时内回复。",
+      back: "返回首页",
+    },
+    footer: {
+      tagline: "你在 Telegram 上的个人助理。",
+      features: "功能",
+      contact: "联系我们",
+    },
+  },
+
+  tr: {
+    htmlLang: "tr",
+    nav: {
+      how: "Nasıl çalışır",
+      features: "Özellikler",
+      examples: "Örnekler",
+      commands: "Komutlar",
+      contact: "İletişim",
+    },
+    openTelegram: "Telegram'da Aç",
+    hero: {
+      badge: "Yapay Zeka ile Çalışır",
+      titleLead: "Kişisel kopilotn,",
+      titleHighlight: "Telegram'da",
+      subtitle:
+        "Telegram Copilot bir ajandaya benzer — ama sihirlidir ve seninle konuşur. Tek işlevi budur: görev, hatırlatıcı ve randevularını düz yazıyla gir, 30 dakika öncesinde bildirim al. Başka hiçbir şey yok.",
+      ctaPrimary: "Telegram'da Başla",
+      ctaSecondary: "Nasıl çalıştığını gör",
+      bullets: ["Konuşan sihirli ajanda", "30 dak. önce hatırlatma", "Gizli ve anonim"],
+      online: "çevrimiçi",
+    },
+    chat: [
+      { from: "user", text: "Salı saat 15'te doktoru aramayı hatırlat bana" },
+      {
+        from: "bot",
+        text: "Tamam 👍 Salı 15:00'te « Doktoru ara » için seni hatırlatacağım.",
+      },
+      { from: "user", text: "Yarın spor salonuna gitmem ve alışveriş yapmam lazım" },
+      {
+        from: "bot",
+        text: "Bitti 👍 2 görev oluşturdum:\n🏋️ Spor salonu — sabah\n🛒 Alışveriş — sabah",
+      },
+      { from: "user", text: "Klimayı kapattım" },
+      { from: "bot", text: "Güzel 👍 « Klimayı kapat » tamamlandı olarak işaretlendi." },
+    ],
+    steps: {
+      title: "Nasıl çalışır",
+      subtitle: "Üç adım, sıfır sürtüşme. Form yok, uygulama yok: sadece bir sohbet.",
+      items: [
+        {
+          title: "Botu aç",
+          description: "Telegram'da Telegram Copilot ile tek tıklamayla sohbet başlat.",
+        },
+        {
+          title: "Doğal yaz",
+          description: "Bir asistana söyler gibi yapman gerekenleri söyle. Öğrenilecek sözdizimi yok.",
+        },
+        {
+          title: "Halletmesine izin ver",
+          description: "Planlar, doğru zamanda hatırlatır ve listenni otomatik olarak güncel tutar.",
+        },
+      ],
+    },
+    features: {
+      title: "İhtiyacın olan her şey",
+      subtitle: "Günlük organizasyonuna hizmet eden gerçek doğal dil anlayışı.",
+      items: [
+        {
+          title: "Doğal dil",
+          description:
+            "Kendi dilinle doğal konuş: « Salı saat 15'te doktoru aramayı hatırlat ». Anlar ve düzenler.",
+        },
+        {
+          title: "Otomatik hatırlatmalar",
+          description: "Her planlanan görevden 30 dakika önce doğrudan Telegram'da bildirim al.",
+        },
+        {
+          title: "Birden fazla görev",
+          description: "« Yarın spor salonuna gitmem ve alışveriş yapmam lazım » tek cümlede tüm görevlerini oluşturur.",
+        },
+        {
+          title: "Taşı ve tamamla",
+          description: "« Görüşmeyi yarın saat 16'ya taşı » veya « klimayı kapattım »: günceller ve işaretler.",
+        },
+        {
+          title: "Sohbet hafızası",
+          description: "Son mesajların bağlamını hatırlar ve belirsiz olduğunda senden açıklama ister.",
+        },
+        {
+          title: "Saat dilimi",
+          description: "Saat dilimini ayarla, nerede olursan ol tüm hatırlatmaların doğru saatte gelsin.",
+        },
+      ],
+    },
+    commands: {
+      title: "Geekler için: doğrudan komutlar",
+      subtitle: "Kısayolları mı tercih ediyorsun? Doğal dilin yanı sıra bot doğrudan komutları da anlar.",
+      items: [
+        { command: "/today", description: "Bugün için planlanan her şeyi gör." },
+        { command: "/tomorrow", description: "Yarın gelecek olanları gör." },
+        { command: "/week", description: "Haftanın ajandası." },
+        { command: "/tasks", description: "Tüm açık görevleri listele." },
+        { command: "/done", description: "Bir görevi tamamlandı olarak işaretle." },
+        { command: "/delete", description: "Bir görevi sil." },
+      ],
+      note: "Peki nasıl oluşturursun? Sadece doğal yaz — komut gerekmez.",
+    },
+    examples: {
+      title: "Sadece söyle",
+      subtitle: "Telegram Copilot'un mükemmel anladığı mesaj örnekleri.",
+      items: [
+        "Salı saat 15'te doktoru aramayı hatırlat bana",
+        "Yarın spor salonuna gitmem ve alışveriş yapmam lazım",
+        "Toplantıyı Perşembe sabahına taşı",
+        "Bugün ne var?",
+        "Antrenmanımı bitirdim",
+        "Yarınki toplantıyı sil",
+      ],
+    },
+    privacy: {
+      title: "Tasarım gereği anonim ve gizli",
+      subtitle: "Hayatın sana ait. Telegram Copilot sessiz kalmak için tasarlandı.",
+      items: [
+        {
+          title: "Telefon numarası ya da e-posta yok",
+          description: "Doğrudan Telegram'dan başlarsın. Botu kullanmak için hiçbir zaman kişisel kimlik istemeyiz.",
+        },
+        {
+          title: "Sadece görevlerin",
+          description: "Yalnızca hatırlatmaların için gereken bilgileri saklarız — fazlasını değil, alışkanlıklarını takip etmeyiz.",
+        },
+        {
+          title: "Asla satılmaz",
+          description: "Verilerin asla satılmaz ya da reklamcılarla paylaşılmaz. Hiç.",
+        },
+        {
+          title: "İstediğinde silinebilir",
+          description: "Bir isteğin yeterli, verilerini sileriz. Kontrolü her zaman sen elinde tutarsın.",
+        },
+      ],
+    },
+    affiliation: {
+      badge: "Sınırlı teklif — Eylül'e kadar",
+      title: "Arkadaşını davet et, %50 kazan",
+      subtitle:
+        "Davet ettiğin her arkadaş Telegram Copilot'a abone olduğunda, aylık gelirlerinin %50'sini doğrudan ve otomatik olarak Eylül'e kadar kazanırsın.",
+      deadline: "Teklif Eylül 2026'ya kadar geçerli",
+      steps: [
+        {
+          title: "Bağlantını al",
+          description: "Telegram'da botu aç, Ortaklık Programı'na git ve benzersiz referans bağlantını kopyala.",
+        },
+        {
+          title: "Paylaş",
+          description: "Bağlantını arkadaşlarınla, topluluğunla veya sosyal medyanda paylaş. Sınırsız davet.",
+        },
+        {
+          title: "%50 kazan",
+          description: "Bağlantın üzerinden alınan her abonelik için her ay gelirin %50'sini alırsın.",
+        },
+      ],
+      cta: "Referans bağlantımı al",
+    },
+    cta: {
+      title: "Organizasyonunu devretmeye hazır mısın?",
+      subtitle: "Telegram'da Telegram Copilot'u aç ve ilk mesajını gönder. Ücretsiz ve anında.",
+      button: "Telegram'da Aç",
+    },
+    contact: {
+      title: "İletişim ve destek",
+      subtitle: "Bir soru, hata veya fikir mi var? Buradayız.",
+      description: "Bize ulaşmanın en hızlı yolu e-posta göndermek. Durumu anlat, sana geri dönelim.",
+      emailLabel: "Bize yaz",
+      cta: "E-posta gönder",
+      responseNote: "Genellikle 24–48 saat içinde yanıt veririz.",
+      back: "Ana sayfaya dön",
+    },
+    footer: {
+      tagline: "Telegram'daki kişisel kopilotn.",
+      features: "Özellikler",
+      contact: "İletişim",
     },
   },
 };

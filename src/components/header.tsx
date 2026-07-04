@@ -23,22 +23,34 @@ export function Header() {
 
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
           <Link
-            href="#fonctionnement"
+            href="/#fonctionnement"
             className="transition-colors hover:text-foreground"
           >
             {t.nav.how}
           </Link>
           <Link
-            href="#fonctionnalites"
+            href="/#fonctionnalites"
             className="transition-colors hover:text-foreground"
           >
             {t.nav.features}
           </Link>
           <Link
-            href="#exemples"
+            href="/#commandes"
+            className="transition-colors hover:text-foreground"
+          >
+            {t.nav.commands}
+          </Link>
+          <Link
+            href="/#exemples"
             className="transition-colors hover:text-foreground"
           >
             {t.nav.examples}
+          </Link>
+          <Link
+            href="/contact"
+            className="transition-colors hover:text-foreground"
+          >
+            {t.nav.contact}
           </Link>
         </nav>
 

@@ -13,6 +13,12 @@ import {
   Share2,
   Coins,
   Clock,
+  Terminal,
+  ShieldCheck,
+  Lock,
+  EyeOff,
+  Trash2,
+  Database,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -182,6 +188,39 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Commandes (geeks) */}
+      <section id="commandes" className="border-t border-border/60 py-20">
+        <div className="container">
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge variant="accent" className="mb-4">
+              <Terminal className="mr-1 h-3 w-3" /> {t.nav.commands}
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              {t.commands.title}
+            </h2>
+            <p className="mt-4 text-muted-foreground">{t.commands.subtitle}</p>
+          </div>
+          <div className="mx-auto mt-12 grid max-w-3xl gap-3 sm:grid-cols-2">
+            {t.commands.items.map((item) => (
+              <div
+                key={item.command}
+                className="flex items-start gap-3 rounded-xl border bg-card px-4 py-3"
+              >
+                <code className="mt-0.5 shrink-0 rounded-md bg-muted px-2 py-1 font-mono text-sm font-semibold text-primary">
+                  {item.command}
+                </code>
+                <span className="text-sm text-muted-foreground">
+                  {item.description}
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="mx-auto mt-6 max-w-3xl text-center text-sm text-muted-foreground">
+            {t.commands.note}
+          </p>
+        </div>
+      </section>
+
       {/* Exemples */}
       <section id="exemples" className="border-t border-border/60 py-20">
         <div className="container">
@@ -201,6 +240,42 @@ export default function HomePage() {
                 <span>« {msg} »</span>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Confidentialité / anonymat */}
+      <section id="confidentialite" className="border-t border-border/60 py-20">
+        <div className="container">
+          <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
+            <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <ShieldCheck className="h-5 w-5" />
+            </span>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              {t.privacy.title}
+            </h2>
+            <p className="mt-4 text-muted-foreground">{t.privacy.subtitle}</p>
+          </div>
+          <div className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2">
+            {t.privacy.items.map((item, i) => {
+              const PrivacyIcons = [EyeOff, Database, Lock, Trash2];
+              const Icon = PrivacyIcons[i] ?? ShieldCheck;
+              return (
+                <Card key={item.title} className="h-full">
+                  <CardHeader className="flex-row items-start gap-4">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <CardTitle className="text-lg">{item.title}</CardTitle>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </div>
+                  </CardHeader>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>

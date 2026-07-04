@@ -3,7 +3,8 @@ const TELEGRAM_BOT_URL = "https://t.me/mypersonalcopilot_bot";
 export const siteConfig = {
   name: "Telegram Copilot",
   description:
-    "Ton copilote personnel sur Telegram : crée des tâches, des rappels et des rendez-vous en langage naturel, en français.",
+    "Ton copilote personnel sur Telegram : crée des tâches, des rappels et des rendez-vous en langage naturel.",
   telegramUrl: TELEGRAM_BOT_URL,
   channelUrl: TELEGRAM_BOT_URL,
+  supportEmail: "telegramcopilot@pm.me",
 } as const;

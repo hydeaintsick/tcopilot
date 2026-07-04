@@ -936,7 +936,275 @@ Tocca /subscribe per abbonarti in pochi secondi. ⭐`,
   },
 };
 
-const DICTS: Record<Language, BotDict> = { en, fr, ru, cs, es, it };
+const zh: BotDict = {
+  locale: "zh-CN",
+  pickerName: "🇨🇳 中文",
+  periods: { MORNING: "上午", NOON: "中午", AFTERNOON: "下午", EVENING: "傍晚", NIGHT: "晚上" },
+  today: "今天",
+  tomorrow: "明天",
+  onDate: (d) => `${d}`,
+  todayCap: "今天",
+  tomorrowCap: "明天",
+  atTime: (t) => `${t}`,
+  defaultHourPhrase: "早上9点",
+  joinAnd: (titles) => titles.join("和"),
+  taskDeleted: (label, title) => `完成！我已删除${label}「${title}」。`,
+  tasksDeleted: (titles) => `完成！我已删除${titles}。`,
+  taskDone: (title) => `很好 👍「${title}」已标记为完成。`,
+  tasksDone: (titles) => `很好 👍 ${titles}已标记为完成。`,
+  timezoneUpdated: (tz) => `完美！你的时区现在是${tz}。`,
+  taskNotFound: "我找不到匹配的任务，能再具体一点吗？",
+  unknown: "我没有理解你的请求。",
+  genericError: "出现了问题。",
+  taskCreatedNoDate: (title, tag) => `好的！\n\n我已将「${title}」添加到你的列表。${tag}`,
+  taskCreatedTime: (dateLabel, time, title, tag) =>
+    `完美 👍\n\n我会在${dateLabel} ${time}提醒你「${title}」。${tag}`,
+  taskCreatedPeriod: (dateLabel, periodLabel, title, tag) =>
+    `完美 👍\n\n我会在${dateLabel}${periodLabel}提醒你「${title}」。${tag}`,
+  taskCreatedDefault: (dateLabel, title, tag) =>
+    `完美 👍\n\n我会在${dateLabel}早上9点提醒你「${title}」。${tag}`,
+  tasksCreatedEmpty: "我无法创建任务。",
+  tasksCreatedHeader: (count) => `完美 👍 我创建了${count}个任务：`,
+  scheduleNoDate: "无日期",
+  taskUpdatedDateTime: (title, date, time) => `已更新！「${title}」安排在${date} ${time}。`,
+  taskUpdatedDate: (title, date) => `已更新！「${title}」安排在${date}。`,
+  taskUpdatedGeneric: (title) => `已更新！「${title}」已被修改。`,
+  listEmpty: "你没有任何计划。",
+  headerNoDate: "📋 <b>无日期</b>",
+  ambiguous: (example, lines) =>
+    `我找到了多个任务，是哪一个？请回复其编号（例如「${example}」）。\n\n${lines}`,
+  navToday: "📅 今天",
+  navTomorrow: "📆 明天",
+  navWeek: "🗗 本周",
+  navMonth: "🗓 本月",
+  navAll: "📋 全部",
+  sectionTomorrow: "明天",
+  sectionWeek: "本周",
+  sectionMonth: "本月",
+  sectionAll: "所有任务",
+  welcome: `你好！我是 TCopilot，你的个人助理。
+
+你可以自然地和我说话：
+• 「周二下午三点提醒我打电话给医生」
+• 「明天我需要去健身房和买菜」
+• 「我锻炼结束了」
+• 「我今天有什么？」
+• 「删除任务3」
+
+命令：/help /today /tomorrow /week /month /tasks /done /delete /subscribe /status /language`,
+  help: (price) => `📖 <b>如何使用 TCopilot</b>
+
+自然地和我说话，文字或语音均可 🎙：
+• 「周二下午三点提醒我打电话给医生」
+• 「明天：健身房和买菜」（一次多个任务）
+• 「我去买菜了」→ 标记任务完成
+• 「把医生的电话改到明天下午四点」
+• 「这周我有什么？」
+
+🆔 <b>按编号管理</b>
+每个任务都有一个编号（#1, #2, #3…），显示在列表中。
+• <code>/delete 3</code> — 删除任务#3
+• <code>/done 3</code> — 将任务#3标记为完成
+• 多个任务相似时，我会问你选哪个：直接回复编号即可。
+
+📋 <b>命令</b>
+/today — 今天的任务
+/tomorrow — 明天的任务
+/week — 接下来7天
+/month — 本月任务
+/tasks — 所有任务
+/done [n] — 标记完成
+/delete [n] — 删除
+/subscribe — 订阅 TCopilot Premium（${price} ⭐/月）
+/status — 订阅状态
+/language — 更改语言
+
+💡 提示：说「我在上海」即可设置时区。`,
+  paywall: (price) => `🔒 <b>TCopilot Premium</b>
+
+需要有效订阅才能使用助理。
+
+✨ <b>${price} ⭐ / 月</b> — 自动续订，随时可在 Telegram 取消。
+
+点击 /subscribe 几秒钟完成订阅。 ⭐`,
+  subscribeButton: (price) => `⭐ 订阅 — ${price} ⭐/月`,
+  subscriptionIntro: (price) =>
+    `这是你的 TCopilot Premium 账单（${price} ⭐/月）。在下方确认付款以激活访问权限。 ✨`,
+  nextRenewal: (date) => `\n\n下次续订：${date}。`,
+  subscriptionSuccessFirst: (until) =>
+    `感谢并欢迎加入 TCopilot Premium！🎉\n\n你的访问权限现已激活。${until}`,
+  subscriptionRenewed: (until) => `订阅已续订，感谢你的信任！💙${until}`,
+  statusAdmin: "👑 你是管理员：完全无限制访问。",
+  statusWhitelist: "✅ 已获授 Premium 访问权限（终身）。尽情享用！💙",
+  statusSubscription: (date) => `✅ Premium 订阅有效。\n\n下次续订：${date}。`,
+  statusTrial: (date, price) =>
+    `🎁 免费试用进行中，截止${date}。\n\n之后请用 /subscribe（${price} ⭐/月）继续。`,
+  statusNone: (price) => `❌ 无有效订阅。\n\n使用 /subscribe（${price} ⭐/月）进行订阅。`,
+  granted: (id) => `✅ 已授予用户 ${id} Premium 访问权限。`,
+  revoked: (id) => `🚫 已移除用户 ${id} 的 Premium 访问权限。`,
+  adminUsage: (cmd) => `用法：/${cmd} <telegram_user_id>`,
+  errNoTitle: "我无法识别任务标题。",
+  errInvalidTimezone: (tz) => `时区"${tz}"无效。请使用 IANA 时区（例如：Asia/Shanghai）。`,
+  errTimezoneMissing: "我不明白你想要哪个时区。",
+  voiceError: "抱歉，我无法理解你的语音消息。要重试或改为文字吗？",
+  voiceEmpty: "我在那条语音消息中什么都没听到，要重试吗？",
+  voiceHeard: (text) => `🎙 « ${text} »`,
+  doneUsage: "请提供任务编号（例如 /done 3）或回复任务消息。",
+  deleteUsage: "请提供任务编号（例如 /delete 3）或回复任务消息。",
+  reminderDue: (title, timeLabel) => `⏰ 30分钟后：${title}${timeLabel}`,
+  reminderAtTime: (time) => ` ${time}`,
+  languagePrompt: "🌍 选择你的语言：",
+  languageSet: "✅ 语言已设置为中文。",
+  commands: {
+    today: "今天的任务",
+    tomorrow: "明天的任务",
+    week: "未来7天",
+    month: "本月任务",
+    tasks: "所有任务",
+    done: "标记任务完成",
+    delete: "删除任务",
+    subscribe: "订阅 TCopilot Premium",
+    status: "我的订阅状态",
+    language: "更改语言",
+    help: "帮助",
+  },
+};
+
+const tr: BotDict = {
+  locale: "tr-TR",
+  pickerName: "🇹🇷 Türkçe",
+  periods: { MORNING: "sabah", NOON: "öğle", AFTERNOON: "öğleden sonra", EVENING: "akşamüstü", NIGHT: "gece" },
+  today: "bugün",
+  tomorrow: "yarın",
+  onDate: (d) => `${d}`,
+  todayCap: "Bugün",
+  tomorrowCap: "Yarın",
+  atTime: (t) => `saat ${t}'de`,
+  defaultHourPhrase: "sabah 9'da",
+  joinAnd: (titles) => titles.join(" ve "),
+  taskDeleted: (label, title) => `Tamam! ${label}« ${title} » görevini sildim.`,
+  tasksDeleted: (titles) => `Tamam! ${titles} görevlerini sildim.`,
+  taskDone: (title) => `Güzel 👍 « ${title} » tamamlandı olarak işaretlendi.`,
+  tasksDone: (titles) => `Güzel 👍 ${titles} tamamlandı olarak işaretlendi.`,
+  timezoneUpdated: (tz) => `Harika! Saat diliminiz artık ${tz}.`,
+  taskNotFound: "Eşleşen bir görev bulamadım. Daha spesifik olabilir misin?",
+  unknown: "İsteğini anlayamadım.",
+  genericError: "Bir şeyler ters gitti.",
+  taskCreatedNoDate: (title, tag) => `Anladım!\n\n« ${title} » listene eklendi.${tag}`,
+  taskCreatedTime: (dateLabel, time, title, tag) =>
+    `Tamam 👍\n\n« ${title} » için ${dateLabel} saat ${time}'de seni hatırlatacağım.${tag}`,
+  taskCreatedPeriod: (dateLabel, periodLabel, title, tag) =>
+    `Tamam 👍\n\n« ${title} » için ${dateLabel} ${periodLabel} seni hatırlatacağım.${tag}`,
+  taskCreatedDefault: (dateLabel, title, tag) =>
+    `Tamam 👍\n\n« ${title} » için ${dateLabel} sabah 9'da seni hatırlatacağım.${tag}`,
+  tasksCreatedEmpty: "Görevleri oluşturamadım.",
+  tasksCreatedHeader: (count) => `Tamam 👍 ${count} görev oluşturdum:`,
+  scheduleNoDate: "tarihi yok",
+  taskUpdatedDateTime: (title, date, time) => `Güncellendi! « ${title} » ${date} saat ${time}'e planlandı.`,
+  taskUpdatedDate: (title, date) => `Güncellendi! « ${title} » ${date}'e planlandı.`,
+  taskUpdatedGeneric: (title) => `Güncellendi! « ${title} » değiştirildi.`,
+  listEmpty: "Hiçbir şey planlanmamış.",
+  headerNoDate: "📋 <b>Tarih yok</b>",
+  ambiguous: (example, lines) =>
+    `Birden fazla görev buldum. Hangisi? Numarasıyla yanıtla (ör. « ${example} »).\n\n${lines}`,
+  navToday: "📅 Bugün",
+  navTomorrow: "📆 Yarın",
+  navWeek: "🗗 Hafta",
+  navMonth: "🗓 Ay",
+  navAll: "📋 Tümü",
+  sectionTomorrow: "Yarın",
+  sectionWeek: "Hafta",
+  sectionMonth: "Ay",
+  sectionAll: "Tüm görevler",
+  welcome: `Merhaba! Ben TCopilot, kişisel asistanın.
+
+Benimle doğal konuşabilirsin:
+• « Salı saat 15'te doktoru aramayı hatırlat bana »
+• « Yarın spor salonuna gitmem ve alışveriş yapmam lazım »
+• « Antrenmanımı bitirdim »
+• « Bugün ne var? »
+• « 3 numaralı görevi sil »
+
+Komutlar: /help /today /tomorrow /week /month /tasks /done /delete /subscribe /status /language`,
+  help: (price) => `📖 <b>TCopilot Nasıl Kullanılır</b>
+
+Benimle doğal konuş, yazı veya sesli 🎙:
+• « Salı saat 15'te doktoru aramayı hatırlat »
+• « Yarın: spor salonu ve alışveriş » (aynı anda birden fazla görev)
+• « Alışveriş yaptım » → görevi tamamlandı olarak işaretler
+• « Doktor aramayı yarın saat 16'ya taşı »
+• « Bu hafta ne var? »
+
+🆔 <b>Numarayla Yönet</b>
+Her görevin listelerde gösterilen bir numarası var (#1, #2, #3…).
+• <code>/delete 3</code> — #3 numaralı görevi siler
+• <code>/done 3</code> — #3 numaralı görevi tamamlandı olarak işaretler
+• Birden fazla görev benzer göründüğünde hangisi olduğunu sorarım: sadece numarasıyla yanıtla.
+
+📋 <b>Komutlar</b>
+/today — Bugünün görevleri
+/tomorrow — Yarının görevleri
+/week — Sonraki 7 gün
+/month — Bu ayki görevler
+/tasks — Tüm görevler
+/done [n] — Tamamlandı işaretle
+/delete [n] — Sil
+/subscribe — TCopilot Premium'a abone ol (${price} ⭐/ay)
+/status — Abonelik durumu
+/language — Dili değiştir
+
+💡 İpucu: « İstanbul'dayım » diyerek saat dilimini ayarlayabilirsin.`,
+  paywall: (price) => `🔒 <b>TCopilot Premium</b>
+
+Asistanı kullanmak için aktif bir abonelik gerekiyor.
+
+✨ <b>${price} ⭐ / ay</b> — otomatik yenileme, istediğin zaman Telegram'dan iptal edebilirsin.
+
+Birkaç saniyede abone olmak için /subscribe. ⭐`,
+  subscribeButton: (price) => `⭐ Abone Ol — ${price} ⭐/ay`,
+  subscriptionIntro: (price) =>
+    `TCopilot Premium faturan (${price} ⭐/ay) burada. Erişimini etkinleştirmek için aşağıdan ödemeyi onayla. ✨`,
+  nextRenewal: (date) => `\n\nSonraki yenileme: ${date}.`,
+  subscriptionSuccessFirst: (until) =>
+    `Teşekkürler ve TCopilot Premium'a hoş geldin! 🎉\n\nErişimin şimdi aktif.${until}`,
+  subscriptionRenewed: (until) => `Abonelik yenilendi, güvenin için teşekkürler! 💙${until}`,
+  statusAdmin: "👑 Yöneticisin: tam, sınırsız erişim.",
+  statusWhitelist: "✅ Premium erişimi verildi (ömür boyu). İyi eğlenceler! 💙",
+  statusSubscription: (date) => `✅ Premium abonelik aktif.\n\nSonraki yenileme: ${date}.`,
+  statusTrial: (date, price) =>
+    `🎁 Ücretsiz deneme ${date} tarihine kadar devam ediyor.\n\nDevam etmek için /subscribe (${price} ⭐/ay).`,
+  statusNone: (price) => `❌ Aktif abonelik yok.\n\n/subscribe (${price} ⭐/ay) ile abone ol.`,
+  granted: (id) => `✅ ${id} kullanıcısına Premium erişimi verildi.`,
+  revoked: (id) => `🚫 ${id} kullanıcısının Premium erişimi kaldırıldı.`,
+  adminUsage: (cmd) => `Kullanım: /${cmd} <telegram_user_id>`,
+  errNoTitle: "Görev başlığını tespit edemedim.",
+  errInvalidTimezone: (tz) => `"${tz}" saat dilimi geçerli değil. Bir IANA saat dilimi kullan (ör. Europe/Istanbul).`,
+  errTimezoneMissing: "Hangi saat dilimini istediğini anlayamadım.",
+  voiceError: "Üzgünüm, sesli mesajını anlayamadım. Tekrar denemek ister misin ya da yazarak mı söylersin?",
+  voiceEmpty: "O sesli mesajda hiçbir şey duymadım. Tekrar dener misin?",
+  voiceHeard: (text) => `🎙 « ${text} »`,
+  doneUsage: "Görev numarasını ver (ör. /done 3) ya da bir görev mesajına yanıtla.",
+  deleteUsage: "Görev numarasını ver (ör. /delete 3) ya da bir görev mesajına yanıtla.",
+  reminderDue: (title, timeLabel) => `⏰ 30 dk sonra: ${title}${timeLabel}`,
+  reminderAtTime: (time) => ` saat ${time}'de`,
+  languagePrompt: "🌍 Dilini seç:",
+  languageSet: "✅ Dil Türkçe olarak ayarlandı.",
+  commands: {
+    today: "Bugünün görevleri",
+    tomorrow: "Yarının görevleri",
+    week: "Sonraki 7 gün",
+    month: "Bu ayki görevler",
+    tasks: "Tüm görevler",
+    done: "Görevi tamamlandı işaretle",
+    delete: "Görevi sil",
+    subscribe: "TCopilot Premium'a abone ol",
+    status: "Abonelik durumum",
+    language: "Dili değiştir",
+    help: "Yardım",
+  },
+};
+
+const DICTS: Record<Language, BotDict> = { en, fr, ru, cs, es, it, zh, tr };
 
 /** Renvoie le dictionnaire du bot pour une langue (repli sur l'anglais). */
 export function getBotDict(language: string | null | undefined): BotDict {

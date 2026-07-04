@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLanguage } from "@/components/language-provider";
 import { siteConfig } from "@/lib/site";
 
@@ -21,12 +22,18 @@ export function Footer() {
           >
             Telegram
           </a>
-          <a
-            href="#fonctionnalites"
+          <Link
+            href="/#fonctionnalites"
             className="transition-colors hover:text-foreground"
           >
             {t.footer.features}
-          </a>
+          </Link>
+          <Link
+            href="/contact"
+            className="transition-colors hover:text-foreground"
+          >
+            {t.footer.contact}
+          </Link>
         </div>
       </div>
     </footer>
