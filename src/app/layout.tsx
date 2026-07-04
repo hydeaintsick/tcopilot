@@ -5,6 +5,7 @@ import { LanguageProvider } from "@/components/language-provider";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { siteConfig } from "@/lib/site";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: {
@@ -34,6 +35,7 @@ export default function RootLayout({
             </div>
           </LanguageProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
