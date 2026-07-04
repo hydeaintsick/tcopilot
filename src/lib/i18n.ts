@@ -157,12 +157,12 @@ export const translations: Record<Language, Dictionary> = {
       title: "Invite friends, earn 50%",
       subtitle:
         "For every friend you refer who subscribes to TCopilot, you earn 50% of their monthly revenue — directly and automatically, until September.",
-      deadline: "Offer valid until September 2025",
+      deadline: "Offer valid until September 2026",
       steps: [
         {
           title: "Get your link",
           description:
-            "Send /affiliate to the bot. It instantly generates your unique referral link.",
+            "Open the bot in Telegram, go to its Affiliate Program, and copy your unique referral link.",
         },
         {
           title: "Share it",
@@ -306,12 +306,12 @@ export const translations: Record<Language, Dictionary> = {
       title: "Invite tes amis, gagne 50%",
       subtitle:
         "Pour chaque ami que tu parraines et qui s'abonne à TCopilot, tu gagnes 50% de ses revenus mensuels — directement et automatiquement, jusqu'en septembre.",
-      deadline: "Offre valable jusqu'en septembre 2025",
+      deadline: "Offre valable jusqu'en septembre 2026",
       steps: [
         {
           title: "Obtiens ton lien",
           description:
-            "Envoie /affiliate au bot. Il génère instantanément ton lien de parrainage unique.",
+            "Ouvre le bot dans Telegram, va dans son programme d'affiliation et copie ton lien de parrainage unique.",
         },
         {
           title: "Partage-le",
@@ -450,12 +450,12 @@ export const translations: Record<Language, Dictionary> = {
       title: "Приглашай друзей, зарабатывай 50%",
       subtitle:
         "За каждого друга, которого ты пригласишь и кто оформит подписку на TCopilot, ты получаешь 50% его ежемесячного дохода — напрямую и автоматически, до сентября.",
-      deadline: "Предложение действительно до сентября 2025",
+      deadline: "Предложение действительно до сентября 2026",
       steps: [
         {
           title: "Получи ссылку",
           description:
-            "Отправь /affiliate боту. Он мгновенно сгенерирует твою уникальную реферальную ссылку.",
+            "Открой бота в Telegram, зайди в его партнёрскую программу и скопируй свою уникальную реферальную ссылку.",
         },
         {
           title: "Поделись ею",
@@ -595,12 +595,12 @@ export const translations: Record<Language, Dictionary> = {
       title: "Pozvi přátele, vydělej 50 %",
       subtitle:
         "Za každého přítele, kterého doporučíš a který si předplatí TCopilot, získáš 50 % jeho měsíčních příjmů — přímo a automaticky, do září.",
-      deadline: "Nabídka platí do září 2025",
+      deadline: "Nabídka platí do září 2026",
       steps: [
         {
           title: "Získej odkaz",
           description:
-            "Pošli /affiliate botovi. Okamžitě vygeneruje tvůj unikátní referenční odkaz.",
+            "Otevři bota v Telegramu, přejdi do jeho affiliate programu a zkopíruj svůj unikátní referenční odkaz.",
         },
         {
           title: "Sdílej ho",
@@ -743,12 +743,12 @@ export const translations: Record<Language, Dictionary> = {
       title: "Invita amigos, gana el 50%",
       subtitle:
         "Por cada amigo que refieras y se suscriba a TCopilot, ganas el 50% de sus ingresos mensuales — directamente y automáticamente, hasta septiembre.",
-      deadline: "Oferta válida hasta septiembre de 2025",
+      deadline: "Oferta válida hasta septiembre de 2026",
       steps: [
         {
           title: "Obtén tu enlace",
           description:
-            "Envía /affiliate al bot. Generará al instante tu enlace de referido único.",
+            "Abre el bot en Telegram, entra en su programa de afiliados y copia tu enlace de referido único.",
         },
         {
           title: "Compártelo",
@@ -888,12 +888,12 @@ export const translations: Record<Language, Dictionary> = {
       title: "Invita amici, guadagna il 50%",
       subtitle:
         "Per ogni amico che referisci e che si iscrive a TCopilot, guadagni il 50% dei suoi ricavi mensili — direttamente e automaticamente, fino a settembre.",
-      deadline: "Offerta valida fino a settembre 2025",
+      deadline: "Offerta valida fino a settembre 2026",
       steps: [
         {
           title: "Ottieni il tuo link",
           description:
-            "Invia /affiliate al bot. Genererà istantaneamente il tuo link di referral unico.",
+            "Apri il bot in Telegram, vai al suo programma di affiliazione e copia il tuo link di referral unico.",
         },
         {
           title: "Condividilo",
