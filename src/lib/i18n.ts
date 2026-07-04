@@ -61,7 +61,7 @@ export const translations: Record<Language, Dictionary> = {
       titleLead: "Your personal copilot,",
       titleHighlight: "on Telegram",
       subtitle:
-        "TCopilot turns your messages into tasks, reminders and appointments. Write in French, like talking to an assistant: it handles the rest.",
+        "Telegram Copilot turns your messages into tasks, reminders and appointments. Write in French, like talking to an assistant: it handles the rest.",
       ctaPrimary: "Start on Telegram",
       ctaSecondary: "See how it works",
       bullets: ["100% in French", "Smart reminders", "No app to install"],
@@ -89,7 +89,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Open the bot",
           description:
-            "Start a conversation with TCopilot on Telegram in one click.",
+            "Start a conversation with Telegram Copilot on Telegram in one click.",
         },
         {
           title: "Write naturally",
@@ -142,7 +142,7 @@ export const translations: Record<Language, Dictionary> = {
     },
     examples: {
       title: "Just tell it things",
-      subtitle: "Here are examples of messages TCopilot understands perfectly.",
+      subtitle: "Here are examples of messages Telegram Copilot understands perfectly.",
       items: [
         "Remind me to call the doctor on Tuesday at 3pm",
         "Tomorrow I need to hit the gym and do groceries",
@@ -156,7 +156,7 @@ export const translations: Record<Language, Dictionary> = {
       badge: "Limited offer — until September",
       title: "Invite friends, earn 50%",
       subtitle:
-        "For every friend you refer who subscribes to TCopilot, you earn 50% of their monthly revenue — directly and automatically, until September.",
+        "For every friend you refer who subscribes to Telegram Copilot, you earn 50% of their monthly revenue — directly and automatically, until September.",
       deadline: "Offer valid until September 2026",
       steps: [
         {
@@ -180,7 +180,7 @@ export const translations: Record<Language, Dictionary> = {
     cta: {
       title: "Ready to delegate your organization?",
       subtitle:
-        "Open TCopilot on Telegram and send your first message. It's free and instant.",
+        "Open Telegram Copilot on Telegram and send your first message. It's free and instant.",
       button: "Open in Telegram",
     },
     footer: {
@@ -202,7 +202,7 @@ export const translations: Record<Language, Dictionary> = {
       titleLead: "Ton copilote personnel,",
       titleHighlight: "sur Telegram",
       subtitle:
-        "TCopilot transforme tes messages en tâches, rappels et rendez-vous. Écris en français, comme à un assistant : il s'occupe du reste.",
+        "Telegram Copilot transforme tes messages en tâches, rappels et rendez-vous. Écris en français, comme à un assistant : il s'occupe du reste.",
       ctaPrimary: "Démarrer sur Telegram",
       ctaSecondary: "Voir comment ça marche",
       bullets: [
@@ -237,7 +237,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Ouvre le bot",
           description:
-            "Lance une conversation avec TCopilot sur Telegram en un clic.",
+            "Lance une conversation avec Telegram Copilot sur Telegram en un clic.",
         },
         {
           title: "Écris naturellement",
@@ -291,7 +291,7 @@ export const translations: Record<Language, Dictionary> = {
     examples: {
       title: "Dis-lui simplement les choses",
       subtitle:
-        "Voici des exemples de messages que TCopilot comprend parfaitement.",
+        "Voici des exemples de messages que Telegram Copilot comprend parfaitement.",
       items: [
         "Rappelle-moi d'appeler le médecin mardi à 15h",
         "Demain faut que je fasse la salle et les courses",
@@ -305,7 +305,7 @@ export const translations: Record<Language, Dictionary> = {
       badge: "Offre limitée — jusqu'en septembre",
       title: "Invite tes amis, gagne 50%",
       subtitle:
-        "Pour chaque ami que tu parraines et qui s'abonne à TCopilot, tu gagnes 50% de ses revenus mensuels — directement et automatiquement, jusqu'en septembre.",
+        "Pour chaque ami que tu parraines et qui s'abonne à Telegram Copilot, tu gagnes 50% de ses revenus mensuels — directement et automatiquement, jusqu'en septembre.",
       deadline: "Offre valable jusqu'en septembre 2026",
       steps: [
         {
@@ -329,7 +329,7 @@ export const translations: Record<Language, Dictionary> = {
     cta: {
       title: "Prêt à déléguer ton organisation ?",
       subtitle:
-        "Ouvre TCopilot sur Telegram et envoie ton premier message. C'est gratuit et immédiat.",
+        "Ouvre Telegram Copilot sur Telegram et envoie ton premier message. C'est gratuit et immédiat.",
       button: "Ouvrir dans Telegram",
     },
     footer: {
@@ -347,7 +347,7 @@ export const translations: Record<Language, Dictionary> = {
       titleLead: "Твой личный помощник,",
       titleHighlight: "в Telegram",
       subtitle:
-        "TCopilot превращает твои сообщения в задачи, напоминания и встречи. Пиши на французском, как ассистенту: остальное он сделает сам.",
+        "Telegram Copilot превращает твои сообщения в задачи, напоминания и встречи. Пиши на французском, как ассистенту: остальное он сделает сам.",
       ctaPrimary: "Начать в Telegram",
       ctaSecondary: "Узнать, как это работает",
       bullets: [
@@ -381,7 +381,7 @@ export const translations: Record<Language, Dictionary> = {
       items: [
         {
           title: "Открой бота",
-          description: "Начни разговор с TCopilot в Telegram в один клик.",
+          description: "Начни разговор с Telegram Copilot в Telegram в один клик.",
         },
         {
           title: "Пиши естественно",
@@ -435,7 +435,7 @@ export const translations: Record<Language, Dictionary> = {
     examples: {
       title: "Просто скажи ему",
       subtitle:
-        "Вот примеры сообщений, которые TCopilot прекрасно понимает.",
+        "Вот примеры сообщений, которые Telegram Copilot прекрасно понимает.",
       items: [
         "Напомни мне позвонить врачу во вторник в 15:00",
         "Завтра мне нужно в спортзал и за покупками",
@@ -449,7 +449,7 @@ export const translations: Record<Language, Dictionary> = {
       badge: "Ограниченное предложение — до сентября",
       title: "Приглашай друзей, зарабатывай 50%",
       subtitle:
-        "За каждого друга, которого ты пригласишь и кто оформит подписку на TCopilot, ты получаешь 50% его ежемесячного дохода — напрямую и автоматически, до сентября.",
+        "За каждого друга, которого ты пригласишь и кто оформит подписку на Telegram Copilot, ты получаешь 50% его ежемесячного дохода — напрямую и автоматически, до сентября.",
       deadline: "Предложение действительно до сентября 2026",
       steps: [
         {
@@ -473,7 +473,7 @@ export const translations: Record<Language, Dictionary> = {
     cta: {
       title: "Готов делегировать свою организацию?",
       subtitle:
-        "Открой TCopilot в Telegram и отправь первое сообщение. Это бесплатно и мгновенно.",
+        "Открой Telegram Copilot в Telegram и отправь первое сообщение. Это бесплатно и мгновенно.",
       button: "Открыть в Telegram",
     },
     footer: {
@@ -491,7 +491,7 @@ export const translations: Record<Language, Dictionary> = {
       titleLead: "Tvůj osobní kopilot,",
       titleHighlight: "na Telegramu",
       subtitle:
-        "TCopilot promění tvé zprávy v úkoly, připomínky a schůzky. Piš francouzsky, jako asistentovi: o zbytek se postará.",
+        "Telegram Copilot promění tvé zprávy v úkoly, připomínky a schůzky. Piš francouzsky, jako asistentovi: o zbytek se postará.",
       ctaPrimary: "Začít na Telegramu",
       ctaSecondary: "Podívat se, jak to funguje",
       bullets: [
@@ -526,7 +526,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Otevři bota",
           description:
-            "Spusť konverzaci s TCopilot na Telegramu jedním kliknutím.",
+            "Spusť konverzaci s Telegram Copilot na Telegramu jedním kliknutím.",
         },
         {
           title: "Piš přirozeně",
@@ -580,7 +580,7 @@ export const translations: Record<Language, Dictionary> = {
     examples: {
       title: "Stačí mu to říct",
       subtitle:
-        "Zde jsou příklady zpráv, kterým TCopilot dokonale rozumí.",
+        "Zde jsou příklady zpráv, kterým Telegram Copilot dokonale rozumí.",
       items: [
         "Připomeň mi zavolat lékaři v úterý v 15:00",
         "Zítra musím do posilovny a nakoupit",
@@ -594,7 +594,7 @@ export const translations: Record<Language, Dictionary> = {
       badge: "Omezená nabídka — do září",
       title: "Pozvi přátele, vydělej 50 %",
       subtitle:
-        "Za každého přítele, kterého doporučíš a který si předplatí TCopilot, získáš 50 % jeho měsíčních příjmů — přímo a automaticky, do září.",
+        "Za každého přítele, kterého doporučíš a který si předplatí Telegram Copilot, získáš 50 % jeho měsíčních příjmů — přímo a automaticky, do září.",
       deadline: "Nabídka platí do září 2026",
       steps: [
         {
@@ -618,7 +618,7 @@ export const translations: Record<Language, Dictionary> = {
     cta: {
       title: "Připraven delegovat svou organizaci?",
       subtitle:
-        "Otevři TCopilot na Telegramu a pošli svou první zprávu. Je to zdarma a okamžité.",
+        "Otevři Telegram Copilot na Telegramu a pošli svou první zprávu. Je to zdarma a okamžité.",
       button: "Otevřít v Telegramu",
     },
     footer: {
@@ -636,7 +636,7 @@ export const translations: Record<Language, Dictionary> = {
       titleLead: "Tu copiloto personal,",
       titleHighlight: "en Telegram",
       subtitle:
-        "TCopilot convierte tus mensajes en tareas, recordatorios y citas. Escribe en francés, como a un asistente: él se encarga del resto.",
+        "Telegram Copilot convierte tus mensajes en tareas, recordatorios y citas. Escribe en francés, como a un asistente: él se encarga del resto.",
       ctaPrimary: "Empezar en Telegram",
       ctaSecondary: "Ver cómo funciona",
       bullets: [
@@ -674,7 +674,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Abre el bot",
           description:
-            "Inicia una conversación con TCopilot en Telegram con un clic.",
+            "Inicia una conversación con Telegram Copilot en Telegram con un clic.",
         },
         {
           title: "Escribe con naturalidad",
@@ -728,7 +728,7 @@ export const translations: Record<Language, Dictionary> = {
     examples: {
       title: "Solo díselo",
       subtitle:
-        "Estos son ejemplos de mensajes que TCopilot entiende perfectamente.",
+        "Estos son ejemplos de mensajes que Telegram Copilot entiende perfectamente.",
       items: [
         "Recuérdame llamar al médico el martes a las 15h",
         "Mañana tengo que ir al gimnasio y hacer la compra",
@@ -742,7 +742,7 @@ export const translations: Record<Language, Dictionary> = {
       badge: "Oferta limitada — hasta septiembre",
       title: "Invita amigos, gana el 50%",
       subtitle:
-        "Por cada amigo que refieras y se suscriba a TCopilot, ganas el 50% de sus ingresos mensuales — directamente y automáticamente, hasta septiembre.",
+        "Por cada amigo que refieras y se suscriba a Telegram Copilot, ganas el 50% de sus ingresos mensuales — directamente y automáticamente, hasta septiembre.",
       deadline: "Oferta válida hasta septiembre de 2026",
       steps: [
         {
@@ -766,7 +766,7 @@ export const translations: Record<Language, Dictionary> = {
     cta: {
       title: "¿Listo para delegar tu organización?",
       subtitle:
-        "Abre TCopilot en Telegram y envía tu primer mensaje. Es gratis e inmediato.",
+        "Abre Telegram Copilot en Telegram y envía tu primer mensaje. Es gratis e inmediato.",
       button: "Abrir en Telegram",
     },
     footer: {
@@ -784,7 +784,7 @@ export const translations: Record<Language, Dictionary> = {
       titleLead: "Il tuo copilota personale,",
       titleHighlight: "su Telegram",
       subtitle:
-        "TCopilot trasforma i tuoi messaggi in attività, promemoria e appuntamenti. Scrivi in francese, come a un assistente: pensa lui al resto.",
+        "Telegram Copilot trasforma i tuoi messaggi in attività, promemoria e appuntamenti. Scrivi in francese, come a un assistente: pensa lui al resto.",
       ctaPrimary: "Inizia su Telegram",
       ctaSecondary: "Scopri come funziona",
       bullets: [
@@ -819,7 +819,7 @@ export const translations: Record<Language, Dictionary> = {
         {
           title: "Apri il bot",
           description:
-            "Avvia una conversazione con TCopilot su Telegram con un clic.",
+            "Avvia una conversazione con Telegram Copilot su Telegram con un clic.",
         },
         {
           title: "Scrivi in modo naturale",
@@ -873,7 +873,7 @@ export const translations: Record<Language, Dictionary> = {
     examples: {
       title: "Diglielo e basta",
       subtitle:
-        "Ecco alcuni esempi di messaggi che TCopilot capisce perfettamente.",
+        "Ecco alcuni esempi di messaggi che Telegram Copilot capisce perfettamente.",
       items: [
         "Ricordami di chiamare il medico martedì alle 15",
         "Domani devo andare in palestra e fare la spesa",
@@ -887,7 +887,7 @@ export const translations: Record<Language, Dictionary> = {
       badge: "Offerta limitata — fino a settembre",
       title: "Invita amici, guadagna il 50%",
       subtitle:
-        "Per ogni amico che referisci e che si iscrive a TCopilot, guadagni il 50% dei suoi ricavi mensili — direttamente e automaticamente, fino a settembre.",
+        "Per ogni amico che referisci e che si iscrive a Telegram Copilot, guadagni il 50% dei suoi ricavi mensili — direttamente e automaticamente, fino a settembre.",
       deadline: "Offerta valida fino a settembre 2026",
       steps: [
         {
@@ -911,7 +911,7 @@ export const translations: Record<Language, Dictionary> = {
     cta: {
       title: "Pronto a delegare la tua organizzazione?",
       subtitle:
-        "Apri TCopilot su Telegram e invia il tuo primo messaggio. È gratis e immediato.",
+        "Apri Telegram Copilot su Telegram e invia il tuo primo messaggio. È gratis e immediato.",
       button: "Apri in Telegram",
     },
     footer: {
