@@ -92,33 +92,35 @@ export const translations: Record<Language, Dictionary> = {
     },
     openTelegram: "Open in Telegram",
     hero: {
-      badge: "Powered by AI",
-      titleLead: "Your personal copilot,",
-      titleHighlight: "on Telegram",
+      badge: "Your AI secretary — never sick, never on vacation 😄",
+      titleLead: "Your personal secretary,",
+      titleHighlight: "for just $0.99 / month",
       subtitle:
-        "Telegram Copilot is like a calendar — but magic, and it talks to you. That's all it does: write your tasks, reminders and appointments in plain words, and get a nudge 30 minutes before. Nothing else.",
-      ctaPrimary: "Start on Telegram",
+        "Available 24/7, never on a coffee break — and she NEVER forgets your appointments. Tell her your tasks and meetings in plain English, get a reminder 30 minutes before. She won't ask for a raise either. 🎉",
+      ctaPrimary: "Try on Telegram",
       ctaSecondary: "See how it works",
       bullets: [
-        "A magic talking agenda",
-        "Reminder 30 min before",
-        "Private & anonymous",
+        "Book appointments & automatic reminders",
+        "30-min heads-up — zero forgotten meetings",
+        "$0.99/month — cheaper than a coffee ☕",
       ],
       online: "online",
     },
     chat: [
-      { from: "user", text: "Remind me to call the doctor on Tuesday at 3pm" },
+      { from: "user", text: "Dentist appointment Friday at 2pm" },
       {
         from: "bot",
-        text: "Got it 👍 I'll remind you Tuesday at 15:00 about « Call the doctor ».",
+        text: "Got it 👍 I'll remind you Friday at 1:30pm about « Dentist appointment ».",
       },
-      { from: "user", text: "Tomorrow I need to hit the gym and do groceries" },
+      { from: "user", text: "Tomorrow: team meeting at 9am and lunch with Sarah at 1pm" },
       {
         from: "bot",
-        text: "Done 👍 I created 2 tasks:\n🏋️ Gym session — morning\n🛒 Groceries — morning",
+        text: "Perfect 👍 I created 2 appointments:\n📅 Team meeting — 9:00\n🍽️ Lunch with Sarah — 13:00",
       },
-      { from: "user", text: "I turned off the AC" },
-      { from: "bot", text: "Nice 👍 « Turn off the AC » is marked as done." },
+      {
+        from: "bot",
+        text: "⏰ In 30 min: Dentist appointment at 2:00pm",
+      },
     ],
     steps: {
       title: "How it works",
@@ -258,10 +260,10 @@ export const translations: Record<Language, Dictionary> = {
       cta: "Get my referral link",
     },
     cta: {
-      title: "Ready to delegate your organization?",
+      title: "Ready to delegate your schedule?",
       subtitle:
-        "Open Telegram Copilot on Telegram and send your first message. It's free and instant.",
-      button: "Open in Telegram",
+        "7-day free trial, then just $0.99 / month. Your secretary is waiting on Telegram — and unlike the real one, she also answers on Sunday at 11pm. 😄",
+      button: "Try for free",
     },
     contact: {
       title: "Contact & support",
@@ -274,7 +276,7 @@ export const translations: Record<Language, Dictionary> = {
       back: "Back to home",
     },
     footer: {
-      tagline: "Your personal copilot on Telegram.",
+      tagline: "Your personal secretary on Telegram — $0.99/month.",
       features: "Features",
       contact: "Contact",
     },
@@ -291,35 +293,34 @@ export const translations: Record<Language, Dictionary> = {
     },
     openTelegram: "Ouvrir dans Telegram",
     hero: {
-      badge: "Propulsé par l'IA",
-      titleLead: "Ton copilote personnel,",
-      titleHighlight: "sur Telegram",
+      badge: "Secrétaire IA — jamais malade, jamais absente 😄",
+      titleLead: "Votre secrétaire personnelle,",
+      titleHighlight: "pour seulement 0,99 $ / mois",
       subtitle:
-        "Telegram Copilot, c'est comme un agenda — mais magique, et qui te parle. Il ne sert qu'à ça : écris tes tâches, rappels et rendez-vous en langage naturel, et reçois un rappel 30 minutes avant. Rien d'autre.",
-      ctaPrimary: "Démarrer sur Telegram",
+        "Disponible 24h/24, 7j/7, jamais en pause café — et surtout, elle n'oublie JAMAIS vos rendez-vous. Dites-lui vos tâches et RDV en langage naturel, et recevez un rappel 30 minutes avant. Elle ne demande pas d'augmentation non plus. 🎉",
+      ctaPrimary: "Essayer sur Telegram",
       ctaSecondary: "Voir comment ça marche",
       bullets: [
-        "Un agenda magique qui parle",
-        "Rappel 30 min avant",
-        "Privé & anonyme",
+        "Prise de RDV & rappels automatiques",
+        "Rappel 30 min avant — zéro oubli garanti",
+        "0,99 $/mois — moins cher qu'un café ☕",
       ],
       online: "en ligne",
     },
     chat: [
-      { from: "user", text: "Rappelle-moi d'appeler le médecin mardi à 15h" },
+      { from: "user", text: "RDV chez le dentiste vendredi à 14h" },
       {
         from: "bot",
-        text: "Parfait 👍 Je te rappellerai mardi à 15:00 pour « Appeler le médecin ».",
+        text: "Noté 👍 Je te rappellerai vendredi à 13h30 pour « RDV dentiste ».",
       },
-      { from: "user", text: "Demain faut que je fasse la salle et les courses" },
+      { from: "user", text: "Demain réunion à 9h et déjeuner avec Marc à 13h" },
       {
         from: "bot",
-        text: "Parfait 👍 J'ai créé 2 tâches :\n🏋️ Séance à la salle — matin\n🛒 Faire les courses — matin",
+        text: "Parfait 👍 J'ai créé 2 rendez-vous :\n📅 Réunion — 9:00\n🍽️ Déjeuner avec Marc — 13:00",
       },
-      { from: "user", text: "j'ai éteint la clim" },
       {
         from: "bot",
-        text: "Bravo 👍 « Éteindre la clim » est marquée comme terminée.",
+        text: "⏰ Dans 30 min : RDV dentiste à 14:00",
       },
     ],
     steps: {
@@ -463,8 +464,8 @@ export const translations: Record<Language, Dictionary> = {
     cta: {
       title: "Prêt à déléguer ton organisation ?",
       subtitle:
-        "Ouvre Telegram Copilot sur Telegram et envoie ton premier message. C'est gratuit et immédiat.",
-      button: "Ouvrir dans Telegram",
+        "7 jours d'essai gratuit, puis seulement 0,99 $ / mois. Ta secrétaire t'attend sur Telegram — et contrairement à la vraie, elle répond aussi le dimanche à 23h. 😄",
+      button: "Essayer gratuitement",
     },
     contact: {
       title: "Contact & support",
@@ -477,7 +478,7 @@ export const translations: Record<Language, Dictionary> = {
       back: "Retour à l'accueil",
     },
     footer: {
-      tagline: "Ton copilote personnel sur Telegram.",
+      tagline: "Votre secrétaire personnelle sur Telegram — 0,99 $/mois.",
       features: "Fonctionnalités",
       contact: "Contact",
     },
