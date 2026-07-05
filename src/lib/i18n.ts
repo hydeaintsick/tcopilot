@@ -38,6 +38,11 @@ export interface Dictionary {
     contact: string;
   };
   openTelegram: string;
+  promoBar: {
+    quote: string;
+    availability: string;
+    price: string;
+  };
   hero: {
     badge: string;
     titleLead: string;
@@ -91,6 +96,11 @@ export const translations: Record<Language, Dictionary> = {
       contact: "Contact",
     },
     openTelegram: "Open in Telegram",
+    promoBar: {
+      quote: "« Your personal secretary »",
+      availability: "available 24/7, never sick, never on vacation",
+      price: "for just $0.99 / month",
+    },
     hero: {
       badge: "Your AI secretary — never sick, never on vacation 😄",
       titleLead: "Your personal secretary,",
@@ -292,6 +302,11 @@ export const translations: Record<Language, Dictionary> = {
       contact: "Contact",
     },
     openTelegram: "Ouvrir dans Telegram",
+    promoBar: {
+      quote: "« Votre secrétaire personnelle »",
+      availability: "disponible 24h/24, jamais malade, jamais en vacances",
+      price: "seulement 0,99 $ / mois",
+    },
     hero: {
       badge: "Secrétaire IA — jamais malade, jamais absente 😄",
       titleLead: "Votre secrétaire personnelle,",
@@ -494,6 +509,11 @@ export const translations: Record<Language, Dictionary> = {
       contact: "Контакты",
     },
     openTelegram: "Открыть в Telegram",
+    promoBar: {
+      quote: "« Твой личный секретарь »",
+      availability: "доступен 24/7, никогда не болеет, никогда не в отпуске",
+      price: "всего 0,99 $ / месяц",
+    },
     hero: {
       badge: "На базе ИИ",
       titleLead: "Твой личный помощник,",
@@ -696,6 +716,11 @@ export const translations: Record<Language, Dictionary> = {
       contact: "Kontakt",
     },
     openTelegram: "Otevřít v Telegramu",
+    promoBar: {
+      quote: "« Tvoje osobní sekretářka »",
+      availability: "k dispozici 24/7, nikdy nemocná, nikdy na dovolené",
+      price: "jen 0,99 $ / měsíc",
+    },
     hero: {
       badge: "Poháněno AI",
       titleLead: "Tvůj osobní kopilot,",
@@ -899,6 +924,11 @@ export const translations: Record<Language, Dictionary> = {
       contact: "Contacto",
     },
     openTelegram: "Abrir en Telegram",
+    promoBar: {
+      quote: "« Tu secretaria personal »",
+      availability: "disponible 24/7, nunca enferma, nunca de vacaciones",
+      price: "solo 0,99 $ / mes",
+    },
     hero: {
       badge: "Impulsado por IA",
       titleLead: "Tu copiloto personal,",
@@ -1105,6 +1135,11 @@ export const translations: Record<Language, Dictionary> = {
       contact: "Contatto",
     },
     openTelegram: "Apri in Telegram",
+    promoBar: {
+      quote: "« La tua segretaria personale »",
+      availability: "disponibile 24/7, mai malata, mai in vacanza",
+      price: "solo 0,99 $ / mese",
+    },
     hero: {
       badge: "Basato sull'IA",
       titleLead: "Il tuo copilota personale,",
@@ -1308,6 +1343,11 @@ export const translations: Record<Language, Dictionary> = {
       contact: "联系我们",
     },
     openTelegram: "在 Telegram 中打开",
+    promoBar: {
+      quote: "« 你的私人秘书 »",
+      availability: "全天候在线，从不生病，从不休假",
+      price: "只需 $0.99 / 月",
+    },
     hero: {
       badge: "AI 驱动",
       titleLead: "你的个人助理，",
@@ -1482,6 +1522,11 @@ export const translations: Record<Language, Dictionary> = {
       contact: "İletişim",
     },
     openTelegram: "Telegram'da Aç",
+    promoBar: {
+      quote: "« Kişisel sekreterin »",
+      availability: "7/24 hazır, asla hasta olmaz, asla tatile çıkmaz",
+      price: "sadece 0,99 $ / ay",
+    },
     hero: {
       badge: "Yapay Zeka ile Çalışır",
       titleLead: "Kişisel kopilotn,",

@@ -16,11 +16,11 @@ export function Header() {
       {/* Promo bar */}
       <div className="w-full bg-primary px-4 py-2 text-center text-xs font-medium text-primary-foreground sm:text-sm">
         <span className="hidden sm:inline">🤖 </span>
-        <span className="font-semibold">« Votre secrétaire personnelle »</span>
+        <span className="font-semibold">{t.promoBar.quote}</span>
         <span className="mx-1.5 opacity-70">·</span>
-        <span>disponible 24h/24, jamais malade, jamais en vacances</span>
+        <span>{t.promoBar.availability}</span>
         <span className="mx-1.5 opacity-70">·</span>
-        <span className="font-bold">seulement 0,99 $ / mois</span>
+        <span className="font-bold">{t.promoBar.price}</span>
         <span className="ml-1">😏</span>
       </div>
 
